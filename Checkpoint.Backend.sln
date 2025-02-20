@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{FE360695-3F2B-1049-3887-35FBB5135923}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C8E42992-5E42-0C2B-DBFE-AA848D06431C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkpoint.API", "src\Backend\Checkpoint.API\Checkpoint.API.csproj", "{AC2A3ACA-2CCB-430A-944B-62420965EC58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkpoint.Domain", "src\Backend\Checkpoint.Domain\Checkpoint.Domain.csproj", "{99A2021F-1A14-4DB0-930B-B94920B557AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkpoint.Infra", "src\Backend\Checkpoint.Infra\Checkpoint.Infra.csproj", "{B769CF2A-CFA5-4A4D-9E41-A6DA41F4575C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkpoint.Application", "src\Backend\Checkpoint.Application\Checkpoint.Application.csproj", "{74CAB1EB-C692-4AAF-A136-6B47A55004FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FE360695-3F2B-1049-3887-35FBB5135923} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{C8E42992-5E42-0C2B-DBFE-AA848D06431C} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{AC2A3ACA-2CCB-430A-944B-62420965EC58} = {FE360695-3F2B-1049-3887-35FBB5135923}
+		{99A2021F-1A14-4DB0-930B-B94920B557AD} = {FE360695-3F2B-1049-3887-35FBB5135923}
+		{B769CF2A-CFA5-4A4D-9E41-A6DA41F4575C} = {FE360695-3F2B-1049-3887-35FBB5135923}
+		{74CAB1EB-C692-4AAF-A136-6B47A55004FC} = {FE360695-3F2B-1049-3887-35FBB5135923}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AC2A3ACA-2CCB-430A-944B-62420965EC58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC2A3ACA-2CCB-430A-944B-62420965EC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC2A3ACA-2CCB-430A-944B-62420965EC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC2A3ACA-2CCB-430A-944B-62420965EC58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99A2021F-1A14-4DB0-930B-B94920B557AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A2021F-1A14-4DB0-930B-B94920B557AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A2021F-1A14-4DB0-930B-B94920B557AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A2021F-1A14-4DB0-930B-B94920B557AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B769CF2A-CFA5-4A4D-9E41-A6DA41F4575C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B769CF2A-CFA5-4A4D-9E41-A6DA41F4575C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B769CF2A-CFA5-4A4D-9E41-A6DA41F4575C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B769CF2A-CFA5-4A4D-9E41-A6DA41F4575C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74CAB1EB-C692-4AAF-A136-6B47A55004FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74CAB1EB-C692-4AAF-A136-6B47A55004FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74CAB1EB-C692-4AAF-A136-6B47A55004FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74CAB1EB-C692-4AAF-A136-6B47A55004FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
