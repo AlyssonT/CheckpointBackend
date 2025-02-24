@@ -1,4 +1,5 @@
 using Checkpoint.Application.Commands.User;
+using Checkpoint.Application.Services;
 using Checkpoint.Domain.Repositories;
 using Checkpoint.Exceptions;
 using Checkpoint.Exceptions.ExceptionBase;
@@ -9,16 +10,20 @@ namespace Checkpoint.Application.Handlers.User;
 
 public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedUserData>
 {
+    private readonly PasswordEncrypter _passwordEncrypter;
     private readonly IUserRepository _userRepository;
-    public CreateUserHandler(IUserRepository userRepository)
+    public CreateUserHandler(IUserRepository userRepository, PasswordEncrypter passwordEncrypter)
     {
+        _passwordEncrypter = passwordEncrypter; ;
         _userRepository = userRepository;
     }
     public async Task<CreatedUserData> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         await Validate(request);
 
-        var userId = await _userRepository.CreateUser(request.Name, request.Password, request.Email);
+        var passwordHash = _passwordEncrypter.Encrypt(request.Password);
+        var userId = await _userRepository.CreateUser(request.Name, passwordHash, request.Email);
+
         return new CreatedUserData { Id = userId };
     }
 
@@ -30,6 +35,11 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedUserD
         {
             var errorMessages = result.Errors.Select(x => x.ErrorMessage).ToList();
             throw new ErrorOnValidationException(errorMessages);
+        }
+
+        if (await _userRepository.UserExists(request.Email, request.Name))
+        {
+            throw new UserAlreadyExistsException("User already exists with this username or email");
         }
     }
 }
