@@ -1,4 +1,7 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
+using Checkpoint.API.Filters;
+using Checkpoint.Infra;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
+
+builder.Services.AddMvc(options => options.Filters.Add<ExceptionFilter>());
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Checkpoint.Application")));
+builder.Services.AddInfra();
 
 var app = builder.Build();
 
@@ -15,7 +22,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(options =>
     {
         options
-            .WithTitle("MyRecipeBook API")
+            .WithTitle("Checkpoint API")
             .WithTheme(ScalarTheme.Mars)
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
