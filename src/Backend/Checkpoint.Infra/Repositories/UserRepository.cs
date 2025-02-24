@@ -24,19 +24,8 @@ public class UserRepository : IUserRepository
         return result.Entity.Id;
     }
 
-    public async Task<User> GetUserById(long id)
+    public async Task<bool> UserExists(string email, string name)
     {
-        var user = await _context.Users.FindAsync(id);
-
-        if (user is null)
-        {
-            var listUsers = await _context.Users.ToListAsync();
-            foreach (var item in listUsers)
-            {
-                Console.WriteLine(item);
-            }
-        }
-
-        return user;
+        return await _context.Users.AnyAsync(x => x.Email == email || x.Name == name);
     }
 }

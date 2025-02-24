@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Checkpoint.API.Filters;
+using Checkpoint.Application;
 using Checkpoint.Infra;
 using Scalar.AspNetCore;
 
@@ -12,6 +13,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddMvc(options => options.Filters.Add<ExceptionFilter>());
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Checkpoint.Application")));
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfra();
 
 var app = builder.Build();

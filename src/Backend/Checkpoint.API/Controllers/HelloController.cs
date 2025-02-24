@@ -1,3 +1,4 @@
+using Checkpoint.API.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Checkpoint.API.Controllers
@@ -8,7 +9,8 @@ namespace Checkpoint.API.Controllers
     {
         [HttpGet]
         public IActionResult Hello() {
-            return Ok("Hello World!");
+            var response = ResponseDto.CreateSuccess("Hello World!");
+            return Ok(response);
         }
     }
 }

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.Filters;
+
 namespace Checkpoint.API.Responses;
 
 public class ResponseDto
@@ -27,5 +29,9 @@ public class ResponseDto
     public static ResponseDto CreateError(List<string> messages, int statusCode = 400)
     {
         return new ResponseDto(false, statusCode, null, messages);
+    }
+    public static ResponseDto CreateError(ExceptionContext context)
+    {
+        return new ResponseDto(false, context.HttpContext.Response.StatusCode, null, [context.Exception.Message]);
     }
 }

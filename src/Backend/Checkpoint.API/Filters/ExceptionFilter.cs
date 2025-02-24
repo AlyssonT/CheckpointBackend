@@ -8,6 +8,13 @@ namespace Checkpoint.API.Filters;
 
 public class ExceptionFilter : IExceptionFilter
 {
+    private static readonly Dictionary<Type, Action<ExceptionContext>> ExceptionHandlers = new()
+    {
+        { typeof(ErrorOnValidationException), HandleValidationException },
+        { typeof(NotFoundException), HandleNotFoundException },
+        { typeof(UserAlreadyExistsException), HandleUserExistsException }
+    };
+
     public void OnException(ExceptionContext context)
     {
         if (context.Exception is CheckpointException)
@@ -19,22 +26,39 @@ public class ExceptionFilter : IExceptionFilter
             HandleUnknownException(context);
         }
     }
+
     private static void HandleCheckpointException(ExceptionContext context)
     {
-        if (context.Exception is ErrorOnValidationException exception) {
-            context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            context.Result = new BadRequestObjectResult(ResponseDto.CreateError(exception.ErrorMessages.ToList()));
-        }
-        else if (context.Exception is NotFoundException)
+        var exceptionType = context.Exception.GetType();
+
+        if (ExceptionHandlers.TryGetValue(exceptionType, out var handler))
         {
-            context.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-            context.Result = new NotFoundObjectResult(ResponseDto.CreateError([context.Exception.Message]));
+            handler(context);
         }
+    }
+
+    private static void HandleValidationException(ExceptionContext context)
+    {
+        var exception = (ErrorOnValidationException)context.Exception;
+        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        context.Result = new BadRequestObjectResult(ResponseDto.CreateError(context));
+    }
+
+    private static void HandleNotFoundException(ExceptionContext context)
+    {
+        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+        context.Result = new NotFoundObjectResult(ResponseDto.CreateError(context));
+    }
+
+    private static void HandleUserExistsException(ExceptionContext context)
+    {
+        context.HttpContext.Response.StatusCode = (int)HttpStatusCode.Conflict;
+        context.Result = new ConflictObjectResult(ResponseDto.CreateError(context));
     }
 
     private static void HandleUnknownException(ExceptionContext context)
     {
         context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        context.Result = new ObjectResult(ResponseDto.CreateError(["An error occurred"]));
+        context.Result = new ObjectResult(ResponseDto.CreateError(["An unexpected error occurred"]));
     }
 }
