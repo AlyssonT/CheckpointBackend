@@ -33,4 +33,11 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAnyOrigin");
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
+
+public partial class Program
+{
+    protected Program()
+    {
+    }
+}

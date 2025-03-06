@@ -39,9 +39,9 @@ public class ExceptionFilter : IExceptionFilter
 
     private static void HandleValidationException(ExceptionContext context)
     {
-        var exception = (ErrorOnValidationException)context.Exception;
+        var validationException = context.Exception as ErrorOnValidationException;
         context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-        context.Result = new BadRequestObjectResult(ResponseDto.CreateError(context));
+        context.Result = new BadRequestObjectResult(ResponseDto.CreateError([.. validationException!.ErrorMessages]));
     }
 
     private static void HandleNotFoundException(ExceptionContext context)
