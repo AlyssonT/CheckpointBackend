@@ -14,7 +14,7 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedUserD
     private readonly IUserRepository _userRepository;
     public CreateUserHandler(IUserRepository userRepository, PasswordEncrypter passwordEncrypter)
     {
-        _passwordEncrypter = passwordEncrypter; ;
+        _passwordEncrypter = passwordEncrypter;
         _userRepository = userRepository;
     }
     public async Task<CreatedUserData> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -39,7 +39,7 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, CreatedUserD
 
         if (await _userRepository.UserExists(request.Email, request.Name))
         {
-            throw new UserAlreadyExistsException("User already exists with this username or email");
+            throw new UserAlreadyExistsException(MessagesExceptions.EMAIL_OR_NAME_ALREADY_REGISTERED);
         }
     }
 }
@@ -55,7 +55,6 @@ public class CreateUserValidator : AbstractValidator<CreateUserCommand>
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage(MessagesExceptions.NAME_EMPTY);
         RuleFor(x => x.Password.Length).GreaterThanOrEqualTo(6).WithMessage(MessagesExceptions.PASSWORD_INVALID);
-        RuleFor(x => x.Email).NotEmpty().WithMessage(MessagesExceptions.EMAIL_EMPTY);
         RuleFor(x => x.Email).EmailAddress().WithMessage(MessagesExceptions.EMAIL_INVALID);
     }
 }
