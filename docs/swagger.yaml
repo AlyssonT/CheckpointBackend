@@ -1,0 +1,69 @@
+definitions:
+  communication.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  communication.RegisterUserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+info:
+  contact: {}
+  description: Checkpoint API Docs.
+  title: Checkpoint API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      description: Login user
+      operationId: login
+      parameters:
+      - description: User credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/communication.LoginRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Login
+  /users:
+    post:
+      description: Register user in the database
+      operationId: register-user
+      parameters:
+      - description: User data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/communication.RegisterUserRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Register user
+schemes:
+- http
+securityDefinitions:
+  JWT:
+    in: header
+    name: token
+    type: apiKey
+swagger: "2.0"
