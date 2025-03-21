@@ -2,8 +2,10 @@ package handlers
 
 import (
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
+	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
 	"github.com/AlyssonT/CheckpointBackend/interfaces"
 	"github.com/AlyssonT/CheckpointBackend/repositories"
+	"github.com/AlyssonT/CheckpointBackend/services"
 )
 
 type LoginHandlers struct {
@@ -18,13 +20,21 @@ func NewLoginHandlers(repos *repositories.Respositories, cryptographer interface
 	}
 }
 
-func (uh *LoginHandlers) Login(credentials *communication.LoginRequest) (bool, error) {
-	dbHashedPassword, err := uh.repository.GetHashedPassword(credentials.Email)
+func (uh *LoginHandlers) Login(credentials *communication.LoginRequest) (string, error) {
+	user, err := uh.repository.GetHashedPassword(credentials.Email)
 	if err != nil {
-		return false, err
+		return "", err
 	}
 
-	validPassword := uh.cryptographer.CheckPassword(dbHashedPassword, credentials.Password)
+	validPassword := uh.cryptographer.CheckPassword(user.Password, credentials.Password)
+	if !validPassword {
+		return "", exceptions.ErrorInvalidCredentials
+	}
 
-	return validPassword, nil
+	token, err := services.GenerateToken(credentials.Email, user.ID)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }

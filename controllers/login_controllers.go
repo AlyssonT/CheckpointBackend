@@ -39,26 +39,17 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 		return
 	}
 
-	isValidCredentials, err := lc.handlers.Login(&request)
+	token, err := lc.handlers.Login(&request)
 	if err != nil {
 		response := exceptions.ErrorHandler(err)
 		ctx.JSON(response.StatusCode, response)
 		return
 	}
 
-	if isValidCredentials {
-		response := &communication.ResponseDTO{
-			StatusCode: http.StatusOK,
-			Message:    "logged in",
-			Data:       true,
-		}
-		ctx.JSON(response.StatusCode, response)
-	} else {
-		response := &communication.ResponseDTO{
-			StatusCode: http.StatusUnauthorized,
-			Message:    "invalid credentials",
-			Data:       false,
-		}
-		ctx.JSON(response.StatusCode, response)
+	response := &communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "logged in",
+		Data:       gin.H{"token": token},
 	}
+	ctx.JSON(response.StatusCode, response)
 }
