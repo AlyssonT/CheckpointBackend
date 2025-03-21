@@ -1,7 +1,7 @@
 package communication
 
 type ResponseDTO struct {
-	Message    string
-	StatusCode int
-	Data       any
+	Message    string `json:"message"`
+	StatusCode int    `json:"statusCode"`
+	Data       any    `json:"data"`
 }
