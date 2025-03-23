@@ -12,7 +12,7 @@ func ExtractAllMessagesFromResponse(w *httptest.ResponseRecorder) ([]string, err
 		return nil, err
 	}
 
-	data, ok := responseJSON["Data"].([]any)
+	data, ok := responseJSON["data"].([]any)
 	if !ok {
 		return nil, errors.New("error parsing response")
 	}

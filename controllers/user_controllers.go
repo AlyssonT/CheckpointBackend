@@ -25,6 +25,11 @@ func NewUserControllers(handlers *handlers.Handlers) *UserController {
 // @Produce		json
 // @Param			request	body	communication.RegisterUserRequest	true	"User data"
 // @Router			/users [post]
+// @Tags			Authentication
+// @Success		201
+// @Failure		400
+// @Failure		409
+// @Failure		500
 func (uc *UserController) RegisterUser(ctx *gin.Context) {
 	var request communication.RegisterUserRequest
 	err := ctx.ShouldBindJSON(&request)

@@ -9,16 +9,20 @@ import (
 	"github.com/AlyssonT/CheckpointBackend/services"
 	testutilities "github.com/AlyssonT/CheckpointBackend/test_utilities"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
-func setupHandlerForTest() *UserHandlers {
+func setupUserHandlerForTest(Db *gorm.DB) *UserHandlers {
+	if Db == nil {
+		Db = db.SetupTestDb(&models.User{})
+	}
 	cryptography := services.NewCryptography(services.DefaultCost)
 
-	return NewUserHandlers(repositories.NewRepositories(db.SetupTestDb(&models.User{})), &cryptography)
+	return NewUserHandlers(repositories.NewRepositories(Db), &cryptography)
 }
 
 func TestRegisterUser_Success(t *testing.T) {
-	handler := setupHandlerForTest()
+	handler := setupUserHandlerForTest(nil)
 
 	user := testutilities.BuildFakeUser()
 
@@ -29,7 +33,7 @@ func TestRegisterUser_Success(t *testing.T) {
 }
 
 func TestRegisterUser_EmailAlreadyExists(t *testing.T) {
-	handler := setupHandlerForTest()
+	handler := setupUserHandlerForTest(nil)
 
 	user := testutilities.BuildFakeUser()
 	_, err := handler.RegisterUser(&user)

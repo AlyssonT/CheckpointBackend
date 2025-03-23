@@ -12,9 +12,9 @@ import (
 //	@title						Checkpoint API
 //	@version					1.0
 //	@description				Checkpoint API Docs.
-//	@securityDefinitions.apiKey	JWT
+//	@securityDefinitions.apikey	BearerAuth
 //	@in							header
-//	@name						token
+//	@name						Authorization
 //	@host						localhost:8080
 
 // @schemes	http

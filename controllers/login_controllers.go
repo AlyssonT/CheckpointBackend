@@ -25,6 +25,10 @@ func NewLoginControllers(handlers *handlers.Handlers) *LoginController {
 // @Produce		json
 // @Param			request	body	communication.LoginRequest	true	"User credentials"
 // @Router			/login [post]
+// @Tags			Authentication
+// @Success		200
+// @Failure		401
+// @Failure		500
 func (lc *LoginController) Login(ctx *gin.Context) {
 	var request communication.LoginRequest
 	err := ctx.ShouldBindJSON(&request)
@@ -49,7 +53,7 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 	response := &communication.ResponseDTO{
 		StatusCode: http.StatusOK,
 		Message:    "logged in",
-		Data:       gin.H{"token": token},
+		Data:       token,
 	}
 	ctx.JSON(response.StatusCode, response)
 }

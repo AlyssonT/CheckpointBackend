@@ -9,4 +9,5 @@ type User struct {
 	Password  string    `gorm:"not null;size:255"`
 	CreatedAt time.Time `gorm:"not null;autoCreateTime"`
 	Active    bool      `gorm:"default:true"`
+	Games     []Game    `gorm:"many2many:user_games;"`
 }
