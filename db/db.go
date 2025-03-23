@@ -13,7 +13,7 @@ func InitDb() *gorm.DB {
 		panic("Failed to load db")
 	}
 
-	Db.AutoMigrate(&models.User{})
+	Db.AutoMigrate(&models.User{}, &models.Game{}, &models.UserGame{})
 
 	return Db
 }

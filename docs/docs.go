@@ -21,6 +21,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Authentication"
+                ],
                 "summary": "Login",
                 "operationId": "login",
                 "parameters": [
@@ -34,6 +37,32 @@ const docTemplate = `{
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/secret": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "teste",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "teste",
+                "operationId": "teste",
                 "responses": {}
             }
         },
@@ -42,6 +71,9 @@ const docTemplate = `{
                 "description": "Register user in the database",
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Authentication"
                 ],
                 "summary": "Register user",
                 "operationId": "register-user",
@@ -56,7 +88,20 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "409": {
+                        "description": "Conflict"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
             }
         }
     },
@@ -98,9 +143,9 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "JWT": {
+        "BearerAuth": {
             "type": "apiKey",
-            "name": "token",
+            "name": "Authorization",
             "in": "header"
         }
     }

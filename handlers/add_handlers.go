@@ -12,9 +12,10 @@ type Handlers struct {
 
 func NewHandlers(repositories *repositories.Respositories) *Handlers {
 	cryptography := services.NewCryptography(services.DefaultCost)
+	jwtService := services.NewJwt()
 
 	return &Handlers{
 		UserHandlers:  NewUserHandlers(repositories, &cryptography),
-		LoginHandlers: NewLoginHandlers(repositories, &cryptography),
+		LoginHandlers: NewLoginHandlers(repositories, &cryptography, &jwtService),
 	}
 }

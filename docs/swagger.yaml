@@ -42,8 +42,26 @@ paths:
           $ref: '#/definitions/communication.LoginRequest'
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
       summary: Login
+      tags:
+      - Authentication
+  /secret:
+    get:
+      description: teste
+      operationId: teste
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: teste
   /users:
     post:
       description: Register user in the database
@@ -57,13 +75,23 @@ paths:
           $ref: '#/definitions/communication.RegisterUserRequest'
       produces:
       - application/json
-      responses: {}
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "409":
+          description: Conflict
+        "500":
+          description: Internal Server Error
       summary: Register user
+      tags:
+      - Authentication
 schemes:
 - http
 securityDefinitions:
-  JWT:
+  BearerAuth:
     in: header
-    name: token
+    name: Authorization
     type: apiKey
 swagger: "2.0"

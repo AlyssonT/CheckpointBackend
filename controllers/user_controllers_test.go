@@ -21,9 +21,12 @@ func setupApiForTest() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 
 	testServer := gin.Default()
-	controllers := NewUserControllers(handlers.NewHandlers(repositories.NewRepositories(db.SetupTestDb(&models.User{}))))
+	dbtest := db.SetupTestDb(&models.User{})
+	userControllers := NewUserControllers(handlers.NewHandlers(repositories.NewRepositories(dbtest)))
+	loginControllers := NewLoginControllers(handlers.NewHandlers(repositories.NewRepositories(dbtest)))
 
-	testServer.POST("/user", controllers.RegisterUser)
+	testServer.POST("/user", userControllers.RegisterUser)
+	testServer.POST("/login", loginControllers.Login)
 
 	return testServer
 }
@@ -42,7 +45,7 @@ func TestRegisterUser_Success(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
-	assert.Equal(t, responseJSON["Data"], user.Name)
+	assert.Equal(t, responseJSON["data"], user.Name)
 }
 
 func TestValidateUser(t *testing.T) {
