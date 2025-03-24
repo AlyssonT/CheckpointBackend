@@ -50,22 +50,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/secret": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "teste",
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "teste",
-                "operationId": "teste",
-                "responses": {}
-            }
-        },
         "/users": {
             "post": {
                 "description": "Register user in the database",
