@@ -1,4 +1,4 @@
-package main
+package configs
 
 import (
 	"encoding/json"
@@ -22,6 +22,7 @@ type Configs struct {
 	IGDBSecretToken            string
 	IGDBAuthorization          string
 	IGDBAuthorizationURL       string
+	IGDBApiURL                 string
 	IGDBAuthorizationExpiresIn int
 	SecretKey                  string
 }
@@ -38,6 +39,7 @@ func BuildConfigs() {
 		IGDBClientId:         os.Getenv("IGDB_CLIENT_ID"),
 		IGDBSecretToken:      os.Getenv("IGDB_SECRET_TOKEN"),
 		IGDBAuthorizationURL: os.Getenv("IGDB_AUTHORIZATION_URL"),
+		IGDBApiURL:           os.Getenv("IGDB_API_URL"),
 		SecretKey:            os.Getenv("SECRET_KEY"),
 	}
 
