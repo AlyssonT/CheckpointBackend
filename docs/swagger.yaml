@@ -52,16 +52,6 @@ paths:
       summary: Login
       tags:
       - Authentication
-  /secret:
-    get:
-      description: teste
-      operationId: teste
-      produces:
-      - application/json
-      responses: {}
-      security:
-      - BearerAuth: []
-      summary: teste
   /users:
     post:
       description: Register user in the database

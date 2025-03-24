@@ -19,6 +19,8 @@ import (
 
 // @schemes	http
 func main() {
+	BuildConfigs()
+
 	dbConnection := db.InitDb()
 
 	repositories := repositories.NewRepositories(dbConnection)
