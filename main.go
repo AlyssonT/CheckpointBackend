@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/AlyssonT/CheckpointBackend/configs"
 	"github.com/AlyssonT/CheckpointBackend/controllers"
 	"github.com/AlyssonT/CheckpointBackend/db"
 	_ "github.com/AlyssonT/CheckpointBackend/docs"
@@ -19,7 +20,7 @@ import (
 
 // @schemes	http
 func main() {
-	BuildConfigs()
+	configs.BuildConfigs()
 
 	dbConnection := db.InitDb()
 
