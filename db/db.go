@@ -6,14 +6,21 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitDb() *gorm.DB {
-	Db, error := gorm.Open(sqlite.Open("Checkpoint.db"), &gorm.Config{})
+var db *gorm.DB
 
-	if error != nil {
+func InitDb() *gorm.DB {
+	var err error
+	db, err = gorm.Open(sqlite.Open("Checkpoint.db"), &gorm.Config{})
+
+	if err != nil {
 		panic("Failed to load db")
 	}
 
-	Db.AutoMigrate(&models.User{}, &models.Game{}, &models.UserGame{})
+	db.AutoMigrate(&models.User{}, &models.Game{}, &models.UserGame{})
 
-	return Db
+	return db
+}
+
+func GetDb() *gorm.DB {
+	return db
 }

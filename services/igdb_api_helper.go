@@ -2,7 +2,6 @@ package services
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -50,7 +49,7 @@ func (helper *IGDBApiHelper) Req(body string) *IGDBApiHelper {
 	return helper
 }
 
-func (helper *IGDBApiHelper) Run() (any, error) {
+func (helper *IGDBApiHelper) Run() ([]byte, error) {
 	req, err := helper.createReq()
 	if err != nil {
 		return nil, err
@@ -69,11 +68,5 @@ func (helper *IGDBApiHelper) Run() (any, error) {
 		return nil, err
 	}
 
-	var responseBody any
-	err = json.Unmarshal(body, &responseBody)
-	if err != nil {
-		return nil, err
-	}
-
-	return responseBody, nil
+	return body, nil
 }
