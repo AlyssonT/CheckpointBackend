@@ -8,6 +8,7 @@ import (
 type Handlers struct {
 	UserHandlers  *UserHandlers
 	LoginHandlers *LoginHandlers
+	GameHandlers  *GameHandlers
 }
 
 func NewHandlers(repositories *repositories.Respositories) *Handlers {
@@ -17,5 +18,6 @@ func NewHandlers(repositories *repositories.Respositories) *Handlers {
 	return &Handlers{
 		UserHandlers:  NewUserHandlers(repositories, &cryptography),
 		LoginHandlers: NewLoginHandlers(repositories, &cryptography, &jwtService),
+		GameHandlers:  NewGameHandlers(repositories),
 	}
 }

@@ -3,6 +3,7 @@ package configs
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -25,6 +26,8 @@ type Configs struct {
 	IGDBApiURL                 string
 	IGDBAuthorizationExpiresIn int
 	SecretKey                  string
+	SteamStoreApiURL           string
+	SteamApiURL                string
 }
 
 var configsData Configs
@@ -32,7 +35,7 @@ var configsData Configs
 func BuildConfigs() {
 	err := godotenv.Load()
 	if err != nil {
-		panic("Error on setting environment")
+		log.Fatal("Error on setting environment")
 	}
 
 	configsData = Configs{
@@ -41,6 +44,8 @@ func BuildConfigs() {
 		IGDBAuthorizationURL: os.Getenv("IGDB_AUTHORIZATION_URL"),
 		IGDBApiURL:           os.Getenv("IGDB_API_URL"),
 		SecretKey:            os.Getenv("SECRET_KEY"),
+		SteamStoreApiURL:     os.Getenv("STEAM_STORE_API_URL"),
+		SteamApiURL:          os.Getenv("STEAM_API_URL"),
 	}
 
 	formData := url.Values{}
@@ -50,7 +55,7 @@ func BuildConfigs() {
 
 	req, err := http.NewRequest("POST", configsData.IGDBAuthorizationURL, strings.NewReader(formData.Encode()))
 	if err != nil {
-		panic("Error on setting environment")
+		log.Fatal("Error on setting environment")
 	}
 
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -58,19 +63,19 @@ func BuildConfigs() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic("Error on setting environment")
+		log.Fatal("Error on setting environment")
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		panic("Error on setting environment")
+		log.Fatal("Error on setting environment")
 	}
 
 	var tokenData TokenResponse
 	err = json.Unmarshal(body, &tokenData)
 	if err != nil {
-		panic("Error on setting environment")
+		log.Fatal("Error on setting environment")
 	}
 
 	configsData.IGDBAuthorization = tokenData.AccessToken
