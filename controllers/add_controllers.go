@@ -11,12 +11,14 @@ import (
 type Controllers struct {
 	UserController  *UserController
 	LoginController *LoginController
+	GameController  *GameController
 }
 
 func NewControllers(handlers *handlers.Handlers) *Controllers {
 	return &Controllers{
 		UserController:  NewUserControllers(handlers),
 		LoginController: NewLoginControllers(handlers),
+		GameController:  NewGameControllers(handlers),
 	}
 }
 
@@ -27,6 +29,7 @@ func DefineControllers(handlers *handlers.Handlers, server *gin.Engine) {
 	authorized := server.Group("/")
 	authorized.Use(middlewares.Authenticate())
 	{
+		authorized.GET("/games", controllers.GameController.GetGames)
 	}
 	server.POST("/users", controllers.UserController.RegisterUser)
 	server.POST("/login", controllers.LoginController.Login)

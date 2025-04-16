@@ -1,6 +1,8 @@
 package db
 
 import (
+	"log"
+
 	"github.com/AlyssonT/CheckpointBackend/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,7 +15,7 @@ func InitDb() *gorm.DB {
 	db, err = gorm.Open(sqlite.Open("Checkpoint.db"), &gorm.Config{})
 
 	if err != nil {
-		panic("Failed to load db")
+		log.Fatal("Failed to load db")
 	}
 
 	db.AutoMigrate(&models.User{}, &models.Game{}, &models.UserGame{})

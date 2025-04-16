@@ -19,7 +19,7 @@ func (j *Jwt) GenerateToken(email string, id uint) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email": email,
 		"id":    id,
-		"exp":   time.Now().Add(time.Hour * 2).Unix(),
+		"exp":   time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	return token.SignedString([]byte(secretKey))

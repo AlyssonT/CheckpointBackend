@@ -9,6 +9,8 @@ type Game struct {
 	Name        string `gorm:"not null"`
 	Description string `gorm:"not null"`
 	Imagem      string
+	Metacritic  uint8
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 	Users       []User    `gorm:"many2many:user_games;"`
+	Genres      []Genre   `gorm:"many2many:game_genres;"`
 }

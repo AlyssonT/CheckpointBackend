@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 )
 
 func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
-	sexualContentKeywords := []string{
+	skipWords := []string{
 		"sexy", "sex", "nude", "nudity",
 		"erotic", "pornographic", "adult",
 		"sexual", "sensual", "xxx", "fuck",
@@ -29,8 +30,8 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 		gameName := strings.ToLower(game.Name)
 
 		shouldSkip := false
-		for _, keyword := range sexualContentKeywords {
-			if strings.Contains(gameName, keyword) {
+		for _, word := range skipWords {
+			if strings.Contains(gameName, word) {
 				shouldSkip = true
 				break
 			}
@@ -80,13 +81,13 @@ func main() {
 				Req(fmt.Sprintf("fields game_id; sort value desc; limit 500; offset %d; where popularity_type = 1;", 500*i)).
 				Run()
 		if err != nil {
-			panic("error on get igdb api data")
+			log.Fatal("error on get igdb api data")
 		}
 
 		var games_id_respose []communication.IGDBPopularityResultDto
 		err = json.Unmarshal(response, &games_id_respose)
 		if err != nil {
-			panic("error on parsing response")
+			log.Fatal("error on parsing response")
 		}
 		for _, game := range games_id_respose {
 			games_id = append(games_id, fmt.Sprintf("%d", game.Game_id))
@@ -98,13 +99,13 @@ func main() {
 				Req("fields cover.url,name,summary,release_dates,slug;where id = (" + strings.Join(games_id, ",") + ");limit 500;").
 				Run()
 		if err != nil {
-			panic("error on get igdb api data")
+			log.Fatal("error on get igdb api data")
 		}
 
 		var games []communication.IGDBGamesDto
 		err = json.Unmarshal(response, &games)
 		if err != nil {
-			panic("error on parsing games data")
+			log.Fatal("error on parsing games data")
 		}
 
 		saveOnDb(&games, dbConnection)
