@@ -17,7 +17,7 @@ func TestJwt_Success(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	err = jwtService.VerifyToken(token)
+	_, err = jwtService.VerifyToken(token)
 
 	assert.Nil(t, err)
 }
@@ -25,7 +25,7 @@ func TestJwt_Success(t *testing.T) {
 func TestJwtVerify_Fail(t *testing.T) {
 	jwtService := NewJwt()
 
-	err := jwtService.VerifyToken("invalidToken")
+	_, err := jwtService.VerifyToken("invalidToken")
 
 	assert.Equal(t, exceptions.ErrorInvalidCredentials, err)
 }

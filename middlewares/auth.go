@@ -13,13 +13,23 @@ func Authenticate() gin.HandlerFunc {
 		jwtService := services.NewJwt()
 		authHeader := ctx.GetHeader("Authorization")
 		token := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer"))
-		err := jwtService.VerifyToken(token)
+		claims, err := jwtService.VerifyToken(token)
 
 		if token == "" || err != nil {
 			response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
 			ctx.AbortWithStatusJSON(response.StatusCode, response)
 			return
 		}
+
+		userID, ok := claims["id"].(float64)
+
+		if !ok {
+			response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+			ctx.AbortWithStatusJSON(response.StatusCode, response)
+			return
+		}
+
+		ctx.Set("userID", uint(userID))
 		ctx.Next()
 	}
 }

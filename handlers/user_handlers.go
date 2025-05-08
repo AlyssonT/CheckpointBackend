@@ -44,3 +44,23 @@ func (uh *UserHandlers) RegisterUser(user *communication.RegisterUserRequest) (s
 
 	return user.Name, nil
 }
+
+func (uh *UserHandlers) UpdateUserProfileDetails(user *communication.UserProfileDetails) error {
+	userProfileDetails, err := uh.repository.GetUserProfileDetails(user.UserID)
+
+	if err != nil {
+		return err
+	}
+
+	//TODO CALL CDN TO CREATE URL
+
+	userProfileDetails.AvatarURL = "new url"
+	userProfileDetails.Bio = user.Bio
+	err = uh.repository.UpdateUserProfileDetails(userProfileDetails)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

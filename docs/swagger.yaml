@@ -83,6 +83,34 @@ paths:
       summary: Login
       tags:
       - Authentication
+  /user/profile:
+    put:
+      consumes:
+      - multipart/form-data
+      description: Update user profile details like bio, avatar etc.
+      parameters:
+      - description: User Bio
+        in: formData
+        name: bio
+        type: string
+      - description: User Avatar
+        in: formData
+        name: avatar
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Update user details
+      tags:
+      - User
   /users:
     post:
       description: Register user in the database

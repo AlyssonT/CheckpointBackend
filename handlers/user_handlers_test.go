@@ -3,6 +3,7 @@ package handlers
 import (
 	"testing"
 
+	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/AlyssonT/CheckpointBackend/db"
 	"github.com/AlyssonT/CheckpointBackend/models"
 	"github.com/AlyssonT/CheckpointBackend/repositories"
@@ -14,7 +15,7 @@ import (
 
 func setupUserHandlerForTest(Db *gorm.DB) *UserHandlers {
 	if Db == nil {
-		Db = db.SetupTestDb(&models.User{})
+		Db = db.SetupTestDb(&models.User{}, &models.UserProfile{})
 	}
 	cryptography := services.NewCryptography(services.DefaultCost)
 
@@ -43,4 +44,22 @@ func TestRegisterUser_EmailAlreadyExists(t *testing.T) {
 	_, err = handler.RegisterUser(&user)
 
 	assert.NotNil(t, err)
+}
+
+func TestUpdateUserDetails_Success(t *testing.T) {
+	handler := setupUserHandlerForTest(nil)
+
+	user := testutilities.BuildFakeUser()
+	_, err := handler.RegisterUser(&user)
+
+	assert.Nil(t, err)
+
+	err = handler.UpdateUserProfileDetails(&communication.UserProfileDetails{
+		UserID: 0,
+		Bio:    "New Bio",
+	})
+
+	assert.Nil(t, err)
+
+	//TODO GET USER DETAILS TEST.
 }

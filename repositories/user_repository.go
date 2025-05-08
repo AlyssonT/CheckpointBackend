@@ -19,17 +19,31 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 }
 
 func (ur *UserRepository) RegisterUser(user *communication.RegisterUserRequest) error {
-	result := ur.dbConnection.Create(&models.User{
+	tx := ur.dbConnection.Begin()
+
+	newUser := &models.User{
 		Name:     user.Name,
 		Email:    user.Email,
 		Password: user.Password,
-	})
-
-	if result.Error != nil {
-		return result.Error
 	}
 
-	return nil
+	if err := tx.Create(newUser).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	profile := &models.UserProfile{
+		UserID:    newUser.ID,
+		Bio:       "",
+		AvatarURL: "",
+	}
+
+	if err := tx.Create(profile).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
 func (ur *UserRepository) VerifyEmailAlreadyExists(user *communication.RegisterUserRequest) (bool, error) {
@@ -43,4 +57,29 @@ func (ur *UserRepository) VerifyEmailAlreadyExists(user *communication.RegisterU
 	}
 
 	return true, nil
+}
+
+func (ur *UserRepository) GetUserProfileDetails(userID uint) (*models.UserProfile, error) {
+	var userPrfileDetails models.UserProfile
+	result := ur.dbConnection.Where(&models.UserProfile{UserID: userID}).First(&userPrfileDetails)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &userPrfileDetails, nil
+}
+
+func (ur *UserRepository) UpdateUserProfileDetails(userProfileDetails *models.UserProfile) error {
+	result := ur.dbConnection.Model(userProfileDetails).
+		Updates(models.UserProfile{
+			AvatarURL: userProfileDetails.AvatarURL,
+			Bio:       userProfileDetails.Bio,
+		})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }

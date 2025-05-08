@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strings"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
@@ -55,6 +56,55 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 		StatusCode: http.StatusCreated,
 		Message:    "User created succesfully.",
 		Data:       createdName,
+	}
+	ctx.JSON(response.StatusCode, response)
+}
+
+// @Summary		Update user details
+// @Description	Update user profile details like bio, avatar etc.
+// @Tags			User
+// @Accept			multipart/form-data
+// @Produce		json
+// @Security		BearerAuth
+// @Router			/user/profile [put]
+// @Param			bio		formData	string	false	"User Bio"
+// @Param			avatar	formData	file	false	"User Avatar"
+// @Success		200
+// @Failure		400
+// @Failure		500
+func (uc *UserController) UpdateUserProfileDetails(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	parsedID, ok := userID.(uint)
+
+	if !exists || !ok {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	bio := ctx.PostForm("bio")
+	file, _, err := ctx.Request.FormFile("avatar")
+
+	if err != nil {
+		if !strings.Contains(err.Error(), "http: no such file") {
+			response := exceptions.ErrorHandler(exceptions.ErrorInvalidAvatarData)
+			ctx.JSON(response.StatusCode, response)
+			return
+		}
+	}
+
+	userProfileDetails := communication.UserProfileDetails{
+		UserID:     parsedID,
+		Bio:        bio,
+		AvatarData: file,
+	}
+
+	uc.handlers.UpdateUserProfileDetails(&userProfileDetails)
+
+	response := communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "Profile details updated succesfully.",
+		Data:       true,
 	}
 	ctx.JSON(response.StatusCode, response)
 }
