@@ -37,7 +37,7 @@ func TestLogin_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	jwtService := services.NewJwt()
-	err := jwtService.VerifyToken(responseJSON["data"])
+	_, err := jwtService.VerifyToken(responseJSON["data"])
 
 	assert.Nil(t, err)
 }
@@ -72,7 +72,7 @@ func TestLogin_Fail(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 
 		jwtService := services.NewJwt()
-		err := jwtService.VerifyToken(responseJSON["data"])
+		_, err := jwtService.VerifyToken(responseJSON["data"])
 
 		assert.ErrorIs(t, exceptions.ErrorInvalidCredentials, err)
 	}

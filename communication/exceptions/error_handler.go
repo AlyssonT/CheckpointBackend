@@ -12,11 +12,13 @@ import (
 var (
 	ErrorEmailAlreadyExists = errors.New("email already registered")
 	ErrorInvalidCredentials = errors.New("invalid credentials")
+	ErrorInvalidAvatarData  = errors.New("invalid avatar data")
 )
 
 var errorStatusMap = map[error]int{
 	ErrorEmailAlreadyExists: http.StatusConflict,
 	ErrorInvalidCredentials: http.StatusUnauthorized,
+	ErrorInvalidAvatarData:  http.StatusBadRequest,
 }
 
 func ErrorHandler(err error) communication.ResponseDTO {

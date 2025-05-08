@@ -18,7 +18,7 @@ func InitDb() *gorm.DB {
 		log.Fatal("Failed to load db")
 	}
 
-	db.AutoMigrate(&models.User{}, &models.Game{}, &models.UserGame{})
+	db.AutoMigrate(&models.User{}, &models.Game{}, &models.UserGame{}, &models.UserProfile{})
 
 	return db
 }

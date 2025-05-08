@@ -38,7 +38,7 @@ func TestLoginHandler_Success(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	err = jwtService.VerifyToken(token)
+	_, err = jwtService.VerifyToken(token)
 
 	assert.Nil(t, err)
 }

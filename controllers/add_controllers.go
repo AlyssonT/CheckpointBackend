@@ -30,6 +30,7 @@ func DefineControllers(handlers *handlers.Handlers, server *gin.Engine) {
 	authorized.Use(middlewares.Authenticate())
 	{
 		authorized.GET("/games", controllers.GameController.GetGames)
+		authorized.PUT("/user/profile", controllers.UserController.UpdateUserProfileDetails)
 	}
 	server.POST("/users", controllers.UserController.RegisterUser)
 	server.POST("/login", controllers.LoginController.Login)
