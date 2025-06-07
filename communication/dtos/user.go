@@ -20,3 +20,9 @@ type UserProfileDetails struct {
 	AvatarData multipart.File
 	UserID     uint
 }
+
+type UserProfileResponse struct {
+	Bio       string `json:"bio"`
+	AvatarURL string `json:"avatarUrl"`
+	UserID    uint   `json:"userID"`
+}

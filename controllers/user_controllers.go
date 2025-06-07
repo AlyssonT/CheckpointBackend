@@ -108,3 +108,38 @@ func (uc *UserController) UpdateUserProfileDetails(ctx *gin.Context) {
 	}
 	ctx.JSON(response.StatusCode, response)
 }
+
+// @Summary		Get user profile
+// @Description	Get user profile
+// @Tags			User
+// @Produce		json
+// @Security		BearerAuth
+// @Router			/user/profile [get]
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (uc *UserController) GetUserProfile(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	parsedID, ok := userID.(uint)
+
+	if !exists || !ok {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	userProfile, err := uc.handlers.GetUserProfile(parsedID)
+
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "",
+		Data:       userProfile,
+	}
+	ctx.JSON(response.StatusCode, response)
+}
