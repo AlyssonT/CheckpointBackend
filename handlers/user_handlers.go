@@ -64,3 +64,17 @@ func (uh *UserHandlers) UpdateUserProfileDetails(user *communication.UserProfile
 
 	return nil
 }
+
+func (uh *UserHandlers) GetUserProfile(parsedID uint) (*communication.UserProfileResponse, error) {
+	userProfile, err := uh.repository.GetUserProfileDetails(parsedID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &communication.UserProfileResponse{
+		Bio:       userProfile.Bio,
+		AvatarURL: userProfile.Bio,
+		UserID:    parsedID,
+	}, nil
+}
