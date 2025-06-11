@@ -21,7 +21,7 @@ func setupApiForTest() *gin.Engine {
 	gin.SetMode(gin.TestMode)
 
 	testServer := gin.Default()
-	dbtest := db.SetupTestDb(&models.User{})
+	dbtest := db.SetupTestDb(&models.User{}, &models.UserProfile{})
 	userControllers := NewUserControllers(handlers.NewHandlers(repositories.NewRepositories(dbtest)))
 	loginControllers := NewLoginControllers(handlers.NewHandlers(repositories.NewRepositories(dbtest)))
 

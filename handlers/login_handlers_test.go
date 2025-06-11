@@ -16,7 +16,7 @@ import (
 
 func setupLoginHandlerForTest(Db *gorm.DB) (*LoginHandlers, *services.Jwt) {
 	if Db == nil {
-		Db = db.SetupTestDb(&models.User{})
+		Db = db.SetupTestDb(&models.User{}, &models.UserProfile{})
 	}
 	cryptography := services.NewCryptography(services.DefaultCost)
 	jwt := services.NewJwt()
@@ -24,7 +24,7 @@ func setupLoginHandlerForTest(Db *gorm.DB) (*LoginHandlers, *services.Jwt) {
 }
 
 func TestLoginHandler_Success(t *testing.T) {
-	db := db.SetupTestDb(&models.User{})
+	db := db.SetupTestDb(&models.User{}, &models.UserProfile{})
 	userHandler := setupUserHandlerForTest(db)
 
 	user := testutilities.BuildFakeUser()
@@ -44,7 +44,7 @@ func TestLoginHandler_Success(t *testing.T) {
 }
 
 func TestLoginHandler_Fail(t *testing.T) {
-	db := db.SetupTestDb(&models.User{})
+	db := db.SetupTestDb(&models.User{}, &models.UserProfile{})
 	userHandler := setupUserHandlerForTest(db)
 
 	user := testutilities.BuildFakeUser()
