@@ -10,7 +10,7 @@ type steamApps struct {
 
 type SteamAppData struct {
 	Name  string `json:"name"`
-	Appid int    `json:"appid"`
+	Appid uint   `json:"appid"`
 }
 
 type MetacriticData struct {
@@ -26,7 +26,7 @@ type GenreData struct {
 type GameData struct {
 	Type       string         `json:"type"`
 	Name       string         `json:"name"`
-	Game_id    int            `json:"steam_appid"`
+	Game_id    uint           `json:"steam_appid"`
 	Summary    string         `json:"short_description"`
 	ImageURL   string         `json:"header_image"`
 	Metacritic MetacriticData `json:"metacritic"`

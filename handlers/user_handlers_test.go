@@ -60,6 +60,4 @@ func TestUpdateUserDetails_Success(t *testing.T) {
 	})
 
 	assert.Nil(t, err)
-
-	//TODO GET USER DETAILS TEST.
 }

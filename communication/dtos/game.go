@@ -2,7 +2,7 @@ package communication
 
 type Game struct {
 	ID          uint   `json:"id"`
-	Game_id     int    `json:"game_id"`
+	Game_id     uint   `json:"game_id"`
 	Slug        string `json:"slug"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -13,3 +13,10 @@ type GetGamesRequest struct {
 	PaginationRequest
 	Query string `json:"query"`
 }
+
+const (
+	StatusPlaying = iota
+	StatusCompleted
+	StatusWanted
+	StatusDropped
+)

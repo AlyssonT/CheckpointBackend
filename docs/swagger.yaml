@@ -1,4 +1,25 @@
 definitions:
+  communication.AddGameToUserRequest:
+    properties:
+      game_id:
+        type: integer
+      review:
+        maxLength: 500
+        type: string
+      score:
+        maximum: 100
+        minimum: 0
+        type: integer
+      status:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - game_id
+    type: object
   communication.LoginRequest:
     properties:
       email:
@@ -83,6 +104,30 @@ paths:
       summary: Login
       tags:
       - Authentication
+  /user/games:
+    post:
+      description: Add a game to the user's collection
+      parameters:
+      - description: Game data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/communication.AddGameToUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Add game to user
+      tags:
+      - User
   /user/profile:
     get:
       description: Get user profile

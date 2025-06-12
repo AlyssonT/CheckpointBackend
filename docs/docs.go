@@ -99,6 +99,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/games": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a game to the user's collection",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Add game to user",
+                "parameters": [
+                    {
+                        "description": "Game data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/communication.AddGameToUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/user/profile": {
             "get": {
                 "security": [
@@ -210,6 +249,35 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "communication.AddGameToUserRequest": {
+            "type": "object",
+            "required": [
+                "game_id"
+            ],
+            "properties": {
+                "game_id": {
+                    "type": "integer"
+                },
+                "review": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "score": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "status": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3
+                    ]
+                }
+            }
+        },
         "communication.LoginRequest": {
             "type": "object",
             "required": [

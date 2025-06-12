@@ -1,7 +1,7 @@
 package communication
 
 type IGDBGamesDto struct {
-	Id            int       `json:"id"`
+	Id            uint      `json:"id"`
 	Cover         IGDBCover `json:"cover"`
 	Name          string    `json:"name"`
 	Release_dates []int     `json:"release_dates"`
