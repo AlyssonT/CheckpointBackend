@@ -83,3 +83,29 @@ func (ur *UserRepository) UpdateUserProfileDetails(userProfileDetails *models.Us
 
 	return nil
 }
+
+func (ur *UserRepository) AddGameToUser(userID uint, game_data *communication.AddGameToUserRequest) error {
+	var user models.User
+	if err := ur.dbConnection.First(&user, userID).Error; err != nil {
+		return err
+	}
+
+	var game models.Game
+	if err := ur.dbConnection.First(&game, game_data.Game_id).Error; err != nil {
+		return err
+	}
+
+	userGame := models.UserGame{
+		UserID:     user.ID,
+		GameID:     game_data.Game_id,
+		Status:     game_data.Status,
+		Score:      game_data.Score,
+		UserReview: game_data.Review,
+	}
+
+	if err := ur.dbConnection.Create(&userGame).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

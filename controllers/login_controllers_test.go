@@ -15,7 +15,7 @@ import (
 )
 
 func TestLogin_Success(t *testing.T) {
-	server := setupApiForTest()
+	server, _ := setupApiForTest()
 	w := httptest.NewRecorder()
 
 	user := testutilities.BuildFakeUser()
@@ -43,7 +43,7 @@ func TestLogin_Success(t *testing.T) {
 }
 
 func TestLogin_Fail(t *testing.T) {
-	server := setupApiForTest()
+	server, _ := setupApiForTest()
 	w := httptest.NewRecorder()
 
 	user := testutilities.BuildFakeUser()

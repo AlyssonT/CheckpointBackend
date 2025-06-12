@@ -143,3 +143,51 @@ func (uc *UserController) GetUserProfile(ctx *gin.Context) {
 	}
 	ctx.JSON(response.StatusCode, response)
 }
+
+// @Summary		Add game to user
+// @Description	Add a game to the user's collection
+// @Tags			User
+// @Produce		json
+// @Security		BearerAuth
+// @Router			/user/games [post]
+// @Param			request	body	communication.AddGameToUserRequest	true	"Game data"
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (uc *UserController) AddGameToUser(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	parsedID, ok := userID.(uint)
+
+	if !exists || !ok {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	var request communication.AddGameToUserRequest
+	err := ctx.ShouldBindJSON(&request)
+	if err != nil {
+		messages := exceptions.CreateValidationErrorMessages(err)
+		response := communication.ResponseDTO{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Validation error",
+			Data:       messages,
+		}
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	err = uc.handlers.AddGameToUser(parsedID, &request)
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "Game added to user successfully.",
+		Data:       nil,
+	}
+	ctx.JSON(response.StatusCode, response)
+}

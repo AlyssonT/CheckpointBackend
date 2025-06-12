@@ -78,3 +78,7 @@ func (uh *UserHandlers) GetUserProfile(parsedID uint) (*communication.UserProfil
 		UserID:    parsedID,
 	}, nil
 }
+
+func (uh *UserHandlers) AddGameToUser(userID uint, request *communication.AddGameToUserRequest) error {
+	return uh.repository.AddGameToUser(userID, request)
+}

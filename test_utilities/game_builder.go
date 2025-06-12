@@ -1,17 +1,19 @@
 package testutilities
 
 import (
+	"log"
 	"time"
 
 	"github.com/AlyssonT/CheckpointBackend/models"
 	"github.com/jaswdr/faker/v2"
+	"gorm.io/gorm"
 )
 
 var f = faker.New()
 
 func BuildFakeGame() models.Game {
 	return models.Game{
-		Game_id:     f.Int(),
+		Game_id:     f.UInt(),
 		Slug:        f.RandomStringWithLength(10),
 		Name:        f.App().Name(),
 		Description: f.App().Name(),
@@ -21,4 +23,14 @@ func BuildFakeGame() models.Game {
 		Users:       nil,
 		Genres:      nil,
 	}
+}
+
+func RegisterFakeGame(db *gorm.DB) uint {
+	game := BuildFakeGame()
+
+	if err := db.Create(&game).Error; err != nil {
+		log.Fatal("failed to register fake game")
+	}
+
+	return game.ID
 }
