@@ -113,5 +113,63 @@ func TestAddGameToUser_Success(t *testing.T) {
 }
 
 func TestAddGameToUser_FailValidation(t *testing.T) {
-	// TODO
+	server, _ := setupApiForTest()
+	w := httptest.NewRecorder()
+
+	token := testutilities.RegisterFakeUser(server, w)
+
+	add_game_request := communication.AddGameToUserRequest{
+		Status: 5,
+		Score:  101,
+	}
+
+	jsonRequest, _ := json.Marshal(add_game_request)
+	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	w = httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+
+	var responseJSON communication.ResponseDTO
+	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+
+	messages, err := testutilities.ExtractAllMessagesFromResponse(w)
+	if err != nil {
+		t.Fatalf("%s", err.Error())
+	}
+
+	expectedMessages := []string{
+		"Field 'Game_id' is required.",
+		"Field 'Status' should be one of [0 1 2 3].",
+		"Field 'Score' should have 100 or less characters.",
+	}
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.ElementsMatch(t, expectedMessages, messages)
+}
+
+func TestAddGameToUser_FailGameDontExist(t *testing.T) {
+	server, _ := setupApiForTest()
+	w := httptest.NewRecorder()
+
+	token := testutilities.RegisterFakeUser(server, w)
+
+	add_game_request := communication.AddGameToUserRequest{
+		Game_id: 1,
+		Status:  1,
+		Score:   90,
+		Review:  "Great game!",
+	}
+
+	jsonRequest, _ := json.Marshal(add_game_request)
+	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	w = httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+
+	var responseJSON communication.ResponseDTO
+	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
 }
