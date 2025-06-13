@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
+	exceptions "github.com/AlyssonT/CheckpointBackend/communication/exceptions"
 	"github.com/AlyssonT/CheckpointBackend/models"
 	"gorm.io/gorm"
 )
@@ -92,6 +93,9 @@ func (ur *UserRepository) AddGameToUser(userID uint, game_data *communication.Ad
 
 	var game models.Game
 	if err := ur.dbConnection.First(&game, game_data.Game_id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return exceptions.ErrorGameNotFound
+		}
 		return err
 	}
 
