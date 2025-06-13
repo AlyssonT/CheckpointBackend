@@ -13,12 +13,14 @@ var (
 	ErrorEmailAlreadyExists = errors.New("email already registered")
 	ErrorInvalidCredentials = errors.New("invalid credentials")
 	ErrorInvalidAvatarData  = errors.New("invalid avatar data")
+	ErrorGameNotFound       = errors.New("game not found")
 )
 
 var errorStatusMap = map[error]int{
 	ErrorEmailAlreadyExists: http.StatusConflict,
 	ErrorInvalidCredentials: http.StatusUnauthorized,
 	ErrorInvalidAvatarData:  http.StatusBadRequest,
+	ErrorGameNotFound:       http.StatusNotFound,
 }
 
 func ErrorHandler(err error) communication.ResponseDTO {
@@ -50,6 +52,10 @@ func CreateValidationErrorMessages(err error) []string {
 				msg = fmt.Sprintf("Field '%s' should be a valid e-mail.", fe.Field())
 			case "min":
 				msg = fmt.Sprintf("Field '%s' should have at least %s characters.", fe.Field(), fe.Param())
+			case "max":
+				msg = fmt.Sprintf("Field '%s' should have %s or less characters.", fe.Field(), fe.Param())
+			case "oneof":
+				msg = fmt.Sprintf("Field '%s' should be one of [%s].", fe.Field(), fe.Param())
 			default:
 				msg = fmt.Sprintf("Field '%s' is invalid.", fe.Field())
 			}
