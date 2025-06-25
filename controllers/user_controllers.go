@@ -191,3 +191,37 @@ func (uc *UserController) AddGameToUser(ctx *gin.Context) {
 	}
 	ctx.JSON(response.StatusCode, response)
 }
+
+// @Summary		Get user games
+// @Description	Get user games
+// @Tags			User
+// @Produce		json
+// @Security		BearerAuth
+// @Router			/user/games [get]
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (uc *UserController) GetUserGames(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	parsedID, ok := userID.(uint)
+
+	if !exists || !ok {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	games, err := uc.handlers.GetUserGames(parsedID)
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := &communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "",
+		Data:       games,
+	}
+	ctx.JSON(response.StatusCode, response)
+}

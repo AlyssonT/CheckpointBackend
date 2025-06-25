@@ -82,3 +82,25 @@ func (uh *UserHandlers) GetUserProfile(parsedID uint) (*communication.UserProfil
 func (uh *UserHandlers) AddGameToUser(userID uint, request *communication.AddGameToUserRequest) error {
 	return uh.repository.AddGameToUser(userID, request)
 }
+
+func (uh *UserHandlers) GetUserGames(userID uint) (*[]communication.UserGamesResponse, error) {
+	userGames, err := uh.repository.GetUserGames(userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	games := make([]communication.UserGamesResponse, len(*userGames))
+	for i, game := range *userGames {
+		games[i] = communication.UserGamesResponse{
+			Game_id:        game.GameID,
+			Game_name:      game.Game.Name,
+			Game_image_url: game.Game.Imagem,
+			Status:         game.Status,
+			Score:          game.Score,
+			Review:         game.UserReview,
+		}
+	}
+
+	return &games, nil
+}

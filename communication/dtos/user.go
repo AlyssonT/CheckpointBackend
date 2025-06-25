@@ -33,3 +33,12 @@ type AddGameToUserRequest struct {
 	Score   uint   `json:"score" binding:"omitempty,min=0,max=100"`
 	Review  string `json:"review" binding:"omitempty,max=500"`
 }
+
+type UserGamesResponse struct {
+	Game_id        uint   `json:"game_id"`
+	Game_name      string `json:"game_name"`
+	Game_image_url string `json:"game_image_url"`
+	Status         uint   `json:"status"`
+	Score          uint   `json:"score"`
+	Review         string `json:"review"`
+}
