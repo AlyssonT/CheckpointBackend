@@ -30,7 +30,14 @@ type UserProfileResponse struct {
 type AddGameToUserRequest struct {
 	Game_id uint   `json:"game_id" binding:"required"`
 	Status  uint   `json:"status" binding:"oneof=0 1 2 3"`
-	Score   uint   `json:"score" binding:"omitempty,min=0,max=100"`
+	Score   uint   `json:"score" binding:"min=0,max=100"`
+	Review  string `json:"review" binding:"omitempty,max=500"`
+}
+
+type UpdateGameToUserRequest struct {
+	Game_id uint   `json:"game_id" binding:"required"`
+	Status  uint   `json:"status" binding:"oneof=0 1 2 3"`
+	Score   uint   `json:"score" binding:"min=0,max=100"`
 	Review  string `json:"review" binding:"omitempty,max=500"`
 }
 

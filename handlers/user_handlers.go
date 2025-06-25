@@ -83,6 +83,10 @@ func (uh *UserHandlers) AddGameToUser(userID uint, request *communication.AddGam
 	return uh.repository.AddGameToUser(userID, request)
 }
 
+func (uh *UserHandlers) UpdateGameToUser(userID uint, request *communication.UpdateGameToUserRequest) error {
+	return uh.repository.UpdateUserGame(userID, request)
+}
+
 func (uh *UserHandlers) GetUserGames(userID uint) (*[]communication.UserGamesResponse, error) {
 	userGames, err := uh.repository.GetUserGames(userID)
 

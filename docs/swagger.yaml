@@ -44,6 +44,27 @@ definitions:
     - name
     - password
     type: object
+  communication.UpdateGameToUserRequest:
+    properties:
+      game_id:
+        type: integer
+      review:
+        maxLength: 500
+        type: string
+      score:
+        maximum: 100
+        minimum: 0
+        type: integer
+      status:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - game_id
+    type: object
 info:
   contact: {}
   description: Checkpoint API Docs.
@@ -142,6 +163,29 @@ paths:
       security:
       - BearerAuth: []
       summary: Add game to user
+      tags:
+      - User
+    put:
+      description: Update user game
+      parameters:
+      - description: Game data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/communication.UpdateGameToUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Update user game
       tags:
       - User
   /user/profile:
