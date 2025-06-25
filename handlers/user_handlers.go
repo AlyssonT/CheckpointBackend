@@ -83,8 +83,12 @@ func (uh *UserHandlers) AddGameToUser(userID uint, request *communication.AddGam
 	return uh.repository.AddGameToUser(userID, request)
 }
 
-func (uh *UserHandlers) UpdateGameToUser(userID uint, request *communication.UpdateGameToUserRequest) error {
-	return uh.repository.UpdateUserGame(userID, request)
+func (uh *UserHandlers) UpdateGameToUser(userID uint, game_id uint, request *communication.UpdateGameToUserRequest) error {
+	return uh.repository.UpdateUserGame(userID, game_id, request)
+}
+
+func (uh *UserHandlers) DeleteGameToUser(userID uint, request *communication.DeleteGameToUserRequest) error {
+	return uh.repository.DeleteUserGame(userID, request.Game_id)
 }
 
 func (uh *UserHandlers) GetUserGames(userID uint) (*[]communication.UserGamesResponse, error) {

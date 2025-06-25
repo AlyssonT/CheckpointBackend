@@ -7,6 +7,7 @@ import (
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
 var (
@@ -21,6 +22,7 @@ var errorStatusMap = map[error]int{
 	ErrorInvalidCredentials: http.StatusUnauthorized,
 	ErrorInvalidAvatarData:  http.StatusBadRequest,
 	ErrorGameNotFound:       http.StatusNotFound,
+	gorm.ErrRecordNotFound:  http.StatusNotFound,
 }
 
 func ErrorHandler(err error) communication.ResponseDTO {

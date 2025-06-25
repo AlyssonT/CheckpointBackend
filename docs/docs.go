@@ -126,43 +126,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update user game",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Update user game",
-                "parameters": [
-                    {
-                        "description": "Game data",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/communication.UpdateGameToUserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -186,6 +149,87 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/communication.AddGameToUserRequest"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/user/games/{gameId}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update user game",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update user game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID to update",
+                        "name": "gameId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Game data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/communication.UpdateGameToUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete user game",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete user game",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Game ID to delete",
+                        "name": "gameId",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -378,13 +422,7 @@ const docTemplate = `{
         },
         "communication.UpdateGameToUserRequest": {
             "type": "object",
-            "required": [
-                "game_id"
-            ],
             "properties": {
-                "game_id": {
-                    "type": "integer"
-                },
                 "review": {
                     "type": "string",
                     "maxLength": 500

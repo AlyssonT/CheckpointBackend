@@ -128,9 +128,9 @@ func (ur *UserRepository) GetUserGames(userID uint) (*[]models.UserGame, error) 
 	return &user_games, nil
 }
 
-func (ur *UserRepository) UpdateUserGame(userID uint, game_data *communication.UpdateGameToUserRequest) error {
+func (ur *UserRepository) UpdateUserGame(userID uint, game_id uint, game_data *communication.UpdateGameToUserRequest) error {
 	var userGame models.UserGame
-	result := ur.dbConnection.Where("user_id = ? AND game_id = ?", userID, game_data.Game_id).First(&userGame)
+	result := ur.dbConnection.Where("user_id = ? AND game_id = ?", userID, game_id).First(&userGame)
 
 	if result.Error != nil {
 		return result.Error
@@ -141,6 +141,21 @@ func (ur *UserRepository) UpdateUserGame(userID uint, game_data *communication.U
 	userGame.UserReview = game_data.Review
 
 	if err := ur.dbConnection.Save(&userGame).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ur *UserRepository) DeleteUserGame(userID uint, game_id uint) error {
+	var userGame models.UserGame
+	result := ur.dbConnection.Where("user_id = ? AND game_id = ?", userID, game_id).First(&userGame)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if err := ur.dbConnection.Delete(&userGame).Error; err != nil {
 		return err
 	}
 

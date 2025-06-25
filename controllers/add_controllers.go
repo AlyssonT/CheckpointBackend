@@ -34,7 +34,8 @@ func DefineControllers(handlers *handlers.Handlers, server *gin.Engine) {
 		authorized.PUT("/user/profile", controllers.UserController.UpdateUserProfileDetails)
 		authorized.POST("/user/games", controllers.UserController.AddGameToUser)
 		authorized.GET("/user/games", controllers.UserController.GetUserGames)
-		authorized.PUT("/user/games", controllers.UserController.UpdateGameToUser)
+		authorized.PUT("/user/games/:gameId", controllers.UserController.UpdateGameToUser)
+		authorized.DELETE("/user/games/:gameId", controllers.UserController.DeleteGameToUser)
 	}
 	server.POST("/users", controllers.UserController.RegisterUser)
 	server.POST("/login", controllers.LoginController.Login)

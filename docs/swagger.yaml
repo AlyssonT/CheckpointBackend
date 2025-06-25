@@ -46,8 +46,6 @@ definitions:
     type: object
   communication.UpdateGameToUserRequest:
     properties:
-      game_id:
-        type: integer
       review:
         maxLength: 500
         type: string
@@ -62,8 +60,6 @@ definitions:
         - 2
         - 3
         type: integer
-    required:
-    - game_id
     type: object
 info:
   contact: {}
@@ -165,9 +161,37 @@ paths:
       summary: Add game to user
       tags:
       - User
+  /user/games/{gameId}:
+    delete:
+      description: Delete user game
+      parameters:
+      - description: Game ID to delete
+        in: path
+        name: gameId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Delete user game
+      tags:
+      - User
     put:
       description: Update user game
       parameters:
+      - description: Game ID to update
+        in: path
+        name: gameId
+        required: true
+        type: string
       - description: Game data
         in: body
         name: request

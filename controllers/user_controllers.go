@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
@@ -197,7 +198,8 @@ func (uc *UserController) AddGameToUser(ctx *gin.Context) {
 // @Tags			User
 // @Produce		json
 // @Security		BearerAuth
-// @Router			/user/games [put]
+// @Router			/user/games/{gameId} [put]
+// @Param			gameId	path	string									true	"Game ID to update"
 // @Param			request	body	communication.UpdateGameToUserRequest	true	"Game data"
 // @Success		200
 // @Failure		401
@@ -212,8 +214,21 @@ func (uc *UserController) UpdateGameToUser(ctx *gin.Context) {
 		return
 	}
 
+	game_id := ctx.Param("gameId")
+	game_idUint, err := strconv.ParseUint(game_id, 10, 32)
+
+	if err != nil {
+		response := communication.ResponseDTO{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid game ID",
+			Data:       nil,
+		}
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
 	var request communication.UpdateGameToUserRequest
-	err := ctx.ShouldBindJSON(&request)
+	err = ctx.ShouldBindJSON(&request)
 	if err != nil {
 		messages := exceptions.CreateValidationErrorMessages(err)
 		response := communication.ResponseDTO{
@@ -225,7 +240,7 @@ func (uc *UserController) UpdateGameToUser(ctx *gin.Context) {
 		return
 	}
 
-	err = uc.handlers.UpdateGameToUser(parsedID, &request)
+	err = uc.handlers.UpdateGameToUser(parsedID, uint(game_idUint), &request)
 	if err != nil {
 		response := exceptions.ErrorHandler(err)
 		ctx.JSON(response.StatusCode, response)
@@ -235,6 +250,58 @@ func (uc *UserController) UpdateGameToUser(ctx *gin.Context) {
 	response := communication.ResponseDTO{
 		StatusCode: http.StatusOK,
 		Message:    "Game updated successfully.",
+		Data:       nil,
+	}
+	ctx.JSON(response.StatusCode, response)
+}
+
+// @Summary		Delete user game
+// @Description	Delete user game
+// @Tags			User
+// @Produce		json
+// @Security		BearerAuth
+// @Router			/user/games/{gameId} [delete]
+// @Param			gameId	path	string	true	"Game ID to delete"
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (uc *UserController) DeleteGameToUser(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	parsedID, ok := userID.(uint)
+
+	if !exists || !ok {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	game_id := ctx.Param("gameId")
+	game_idUint, err := strconv.ParseUint(game_id, 10, 32)
+
+	if err != nil {
+		response := communication.ResponseDTO{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid game ID",
+			Data:       nil,
+		}
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	request := communication.DeleteGameToUserRequest{
+		Game_id: uint(game_idUint),
+	}
+
+	err = uc.handlers.DeleteGameToUser(parsedID, &request)
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "Game deleted successfully.",
 		Data:       nil,
 	}
 	ctx.JSON(response.StatusCode, response)
