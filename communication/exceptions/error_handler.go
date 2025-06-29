@@ -11,18 +11,20 @@ import (
 )
 
 var (
-	ErrorEmailAlreadyExists = errors.New("email already registered")
-	ErrorInvalidCredentials = errors.New("invalid credentials")
-	ErrorInvalidAvatarData  = errors.New("invalid avatar data")
-	ErrorGameNotFound       = errors.New("game not found")
+	ErrorEmailAlreadyExists   = errors.New("email already registered")
+	ErrorInvalidCredentials   = errors.New("invalid credentials")
+	ErrorInvalidAvatarData    = errors.New("invalid avatar data")
+	ErrorGameNotFound         = errors.New("game not found")
+	ErrorGameAlreadyAddedUser = errors.New("game already added for this user")
 )
 
 var errorStatusMap = map[error]int{
-	ErrorEmailAlreadyExists: http.StatusConflict,
-	ErrorInvalidCredentials: http.StatusUnauthorized,
-	ErrorInvalidAvatarData:  http.StatusBadRequest,
-	ErrorGameNotFound:       http.StatusNotFound,
-	gorm.ErrRecordNotFound:  http.StatusNotFound,
+	ErrorEmailAlreadyExists:   http.StatusConflict,
+	ErrorInvalidCredentials:   http.StatusUnauthorized,
+	ErrorInvalidAvatarData:    http.StatusBadRequest,
+	ErrorGameNotFound:         http.StatusNotFound,
+	gorm.ErrRecordNotFound:    http.StatusNotFound,
+	ErrorGameAlreadyAddedUser: http.StatusConflict,
 }
 
 func ErrorHandler(err error) communication.ResponseDTO {

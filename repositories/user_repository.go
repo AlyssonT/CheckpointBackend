@@ -99,6 +99,12 @@ func (ur *UserRepository) AddGameToUser(userID uint, game_data *communication.Ad
 		return err
 	}
 
+	if err := ur.dbConnection.First(&models.UserGame{}, "user_id = ? AND game_id = ?", userID, game_data.Game_id).Error; err == nil {
+		return exceptions.ErrorGameAlreadyAddedUser
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
 	userGame := models.UserGame{
 		UserID:     user.ID,
 		GameID:     game_data.Game_id,
