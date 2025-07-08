@@ -1,12 +1,15 @@
 package main
 
 import (
+	"time"
+
 	"github.com/AlyssonT/CheckpointBackend/configs"
 	"github.com/AlyssonT/CheckpointBackend/controllers"
 	"github.com/AlyssonT/CheckpointBackend/db"
 	_ "github.com/AlyssonT/CheckpointBackend/docs"
 	"github.com/AlyssonT/CheckpointBackend/handlers"
 	"github.com/AlyssonT/CheckpointBackend/repositories"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +32,16 @@ func main() {
 	handlers := handlers.NewHandlers(repositories)
 
 	server := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
+	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
+	config.ExposeHeaders = []string{"Content-Length"}
+	config.AllowCredentials = true
+	config.MaxAge = 12 * time.Hour
+
+	server.Use(cors.New((config)))
 
 	controllers.DefineControllers(handlers, server)
 
