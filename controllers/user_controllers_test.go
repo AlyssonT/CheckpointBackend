@@ -52,7 +52,17 @@ func TestRegisterUser_Success(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
-	assert.Equal(t, responseJSON["data"], user.Name)
+
+	w = httptest.NewRecorder()
+	login := communication.LoginRequest{
+		Email:    user.Email,
+		Password: user.Password,
+	}
+	jsonRequest, _ = json.Marshal(login)
+	req, _ = http.NewRequest("POST", "/login", bytes.NewReader(jsonRequest))
+	server.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestValidateUser(t *testing.T) {

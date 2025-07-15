@@ -19,7 +19,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	}
 }
 
-func (ur *UserRepository) RegisterUser(user *communication.RegisterUserRequest) error {
+func (ur *UserRepository) RegisterUser(user *communication.RegisterUserRequest) (uint, error) {
 	tx := ur.dbConnection.Begin()
 
 	newUser := &models.User{
@@ -30,7 +30,7 @@ func (ur *UserRepository) RegisterUser(user *communication.RegisterUserRequest) 
 
 	if err := tx.Create(newUser).Error; err != nil {
 		tx.Rollback()
-		return err
+		return 0, err
 	}
 
 	profile := &models.UserProfile{
@@ -41,10 +41,15 @@ func (ur *UserRepository) RegisterUser(user *communication.RegisterUserRequest) 
 
 	if err := tx.Create(profile).Error; err != nil {
 		tx.Rollback()
-		return err
+		return 0, err
 	}
 
-	return tx.Commit().Error
+	result := tx.Commit()
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return newUser.ID, nil
 }
 
 func (ur *UserRepository) VerifyEmailAlreadyExists(user *communication.RegisterUserRequest) (bool, error) {
@@ -58,6 +63,17 @@ func (ur *UserRepository) VerifyEmailAlreadyExists(user *communication.RegisterU
 	}
 
 	return true, nil
+}
+
+func (ur *UserRepository) GetUser(userID uint) (*models.User, error) {
+	var user models.User
+	result := ur.dbConnection.Where("ID = ?", userID).First(&user)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
 }
 
 func (ur *UserRepository) GetUserProfileDetails(userID uint) (*models.UserProfile, error) {

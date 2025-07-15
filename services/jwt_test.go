@@ -13,7 +13,7 @@ func TestJwt_Success(t *testing.T) {
 	user := testutilities.BuildFakeUser()
 	id := 1
 
-	token, err := jwtService.GenerateToken(user.Email, uint(id))
+	token, err := jwtService.GenerateToken(user.Name, user.Email, uint(id))
 
 	assert.Nil(t, err)
 

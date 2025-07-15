@@ -20,7 +20,7 @@ func NewLoginRepository(db *gorm.DB) *LoginRepository {
 
 func (lr *LoginRepository) GetHashedPassword(email string) (*models.User, error) {
 	var user models.User
-	result := lr.dbConnection.Where(&models.User{Email: email}).Select("id", "password").First(&user)
+	result := lr.dbConnection.Where(&models.User{Email: email}).Select("name", "id", "password").First(&user)
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return &models.User{}, exceptions.ErrorInvalidCredentials

@@ -10,12 +10,14 @@ import (
 type UserHandlers struct {
 	repository    *repositories.UserRepository
 	cryptographer interfaces.Cryptographer
+	jwtService    interfaces.JwtService
 }
 
-func NewUserHandlers(repos *repositories.Respositories, cryptographer interfaces.Cryptographer) *UserHandlers {
+func NewUserHandlers(repos *repositories.Respositories, cryptographer interfaces.Cryptographer, jwtService interfaces.JwtService) *UserHandlers {
 	return &UserHandlers{
 		repository:    repos.UserRepository,
 		cryptographer: cryptographer,
+		jwtService:    jwtService,
 	}
 }
 
@@ -36,13 +38,19 @@ func (uh *UserHandlers) RegisterUser(user *communication.RegisterUserRequest) (s
 	}
 
 	user.Password = hashedPassword
-	err = uh.repository.RegisterUser(user)
+	userID, err := uh.repository.RegisterUser(user)
 
 	if err != nil {
 		return "", err
 	}
 
-	return user.Name, nil
+	token, err := uh.jwtService.GenerateToken(user.Name, user.Email, userID)
+
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func (uh *UserHandlers) UpdateUserProfileDetails(user *communication.UserProfileDetails) error {

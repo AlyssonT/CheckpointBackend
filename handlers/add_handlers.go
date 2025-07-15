@@ -16,7 +16,7 @@ func NewHandlers(repositories *repositories.Respositories) *Handlers {
 	jwtService := services.NewJwt()
 
 	return &Handlers{
-		UserHandlers:  NewUserHandlers(repositories, &cryptography),
+		UserHandlers:  NewUserHandlers(repositories, &cryptography, &jwtService),
 		LoginHandlers: NewLoginHandlers(repositories, &cryptography, &jwtService),
 		GameHandlers:  NewGameHandlers(repositories),
 	}

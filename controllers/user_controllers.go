@@ -46,7 +46,7 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	createdName, err := uc.handlers.RegisterUser(&request)
+	token, err := uc.handlers.RegisterUser(&request)
 	if err != nil {
 		response := exceptions.ErrorHandler(err)
 		ctx.JSON(response.StatusCode, response)
@@ -56,7 +56,7 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 	response := communication.ResponseDTO{
 		StatusCode: http.StatusCreated,
 		Message:    "User created succesfully.",
-		Data:       createdName,
+		Data:       token,
 	}
 	ctx.JSON(response.StatusCode, response)
 }

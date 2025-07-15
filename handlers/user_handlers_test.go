@@ -18,8 +18,9 @@ func setupUserHandlerForTest(Db *gorm.DB) *UserHandlers {
 		Db = db.SetupTestDb(&models.User{}, &models.UserProfile{})
 	}
 	cryptography := services.NewCryptography(services.DefaultCost)
+	jwtService := services.NewJwt()
 
-	return NewUserHandlers(repositories.NewRepositories(Db), &cryptography)
+	return NewUserHandlers(repositories.NewRepositories(Db), &cryptography, &jwtService)
 }
 
 func TestRegisterUser_Success(t *testing.T) {
@@ -27,10 +28,13 @@ func TestRegisterUser_Success(t *testing.T) {
 
 	user := testutilities.BuildFakeUser()
 
-	name, err := handler.RegisterUser(&user)
+	token, err := handler.RegisterUser(&user)
 
 	assert.Nil(t, err)
-	assert.Equal(t, user.Name, name)
+
+	_, err = handler.jwtService.VerifyToken(token)
+
+	assert.Nil(t, err)
 }
 
 func TestRegisterUser_EmailAlreadyExists(t *testing.T) {
