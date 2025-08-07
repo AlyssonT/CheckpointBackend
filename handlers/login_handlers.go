@@ -10,14 +10,14 @@ import (
 type LoginHandlers struct {
 	repository    *repositories.LoginRepository
 	cryptographer interfaces.Cryptographer
-	jwtService    interfaces.JwtService
+	JwtService    interfaces.JwtService
 }
 
 func NewLoginHandlers(repos *repositories.Respositories, cryptographer interfaces.Cryptographer, jwtService interfaces.JwtService) *LoginHandlers {
 	return &LoginHandlers{
 		repository:    repos.LoginRepository,
 		cryptographer: cryptographer,
-		jwtService:    jwtService,
+		JwtService:    jwtService,
 	}
 }
 
@@ -32,7 +32,7 @@ func (uh *LoginHandlers) Login(credentials *communication.LoginRequest) (string,
 		return "", exceptions.ErrorInvalidCredentials
 	}
 
-	token, err := uh.jwtService.GenerateToken(user.Name, credentials.Email, user.ID)
+	token, err := uh.JwtService.GenerateToken(user.Name, credentials.Email, user.ID)
 	if err != nil {
 		return "", err
 	}

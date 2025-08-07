@@ -27,8 +27,10 @@ func DefineControllers(handlers *handlers.Handlers, server *gin.Engine) {
 	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	authorized := server.Group("/")
-	authorized.Use(middlewares.Authenticate())
+	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
 	{
+		authorized.GET("/me", controllers.UserController.Me)
+		authorized.POST("/logout", controllers.LoginController.Logout)
 		authorized.GET("/games", controllers.GameController.GetGames)
 		authorized.GET("/user/profile", controllers.UserController.GetUserProfile)
 		authorized.PUT("/user/profile", controllers.UserController.UpdateUserProfileDetails)

@@ -4,10 +4,12 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
 	"github.com/AlyssonT/CheckpointBackend/handlers"
+	"github.com/AlyssonT/CheckpointBackend/interfaces"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,6 +21,39 @@ func NewUserControllers(handlers *handlers.Handlers) *UserController {
 	return &UserController{
 		handlers: handlers.UserHandlers,
 	}
+}
+
+// @Summary		User data
+// @Description	Get user data from cookie token
+// @ID				cookie-token-user-data
+// @Produce		json
+// @Router			/me [get]
+// @Tags			User
+// @Security		cookieAuth
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (uc *UserController) Me(ctx *gin.Context) {
+	userData, exists := ctx.Get("userData")
+	if !exists {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	parsedUserData, ok := userData.(interfaces.UserClaims)
+	if !ok {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "",
+		Data:       parsedUserData,
+	}
+	ctx.JSON(response.StatusCode, response)
 }
 
 // @Summary		Register user
@@ -53,10 +88,13 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
+	ctx.SetSameSite(http.SameSiteStrictMode)
+	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", "", true, true)
+
 	response := communication.ResponseDTO{
 		StatusCode: http.StatusCreated,
 		Message:    "User created succesfully.",
-		Data:       token,
+		Data:       nil,
 	}
 	ctx.JSON(response.StatusCode, response)
 }
@@ -66,7 +104,7 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 // @Tags			User
 // @Accept			multipart/form-data
 // @Produce		json
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Router			/user/profile [put]
 // @Param			bio		formData	string	false	"User Bio"
 // @Param			avatar	formData	file	false	"User Avatar"
@@ -114,7 +152,7 @@ func (uc *UserController) UpdateUserProfileDetails(ctx *gin.Context) {
 // @Description	Get user profile
 // @Tags			User
 // @Produce		json
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Router			/user/profile [get]
 // @Success		200
 // @Failure		401
@@ -149,7 +187,7 @@ func (uc *UserController) GetUserProfile(ctx *gin.Context) {
 // @Description	Add a game to the user's collection
 // @Tags			User
 // @Produce		json
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Router			/user/games [post]
 // @Param			request	body	communication.AddGameToUserRequest	true	"Game data"
 // @Success		200
@@ -197,7 +235,7 @@ func (uc *UserController) AddGameToUser(ctx *gin.Context) {
 // @Description	Update user game
 // @Tags			User
 // @Produce		json
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Router			/user/games/{gameId} [put]
 // @Param			gameId	path	string									true	"Game ID to update"
 // @Param			request	body	communication.UpdateGameToUserRequest	true	"Game data"
@@ -259,7 +297,7 @@ func (uc *UserController) UpdateGameToUser(ctx *gin.Context) {
 // @Description	Delete user game
 // @Tags			User
 // @Produce		json
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Router			/user/games/{gameId} [delete]
 // @Param			gameId	path	string	true	"Game ID to delete"
 // @Success		200
@@ -311,7 +349,7 @@ func (uc *UserController) DeleteGameToUser(ctx *gin.Context) {
 // @Description	Get user games
 // @Tags			User
 // @Produce		json
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Router			/user/games [get]
 // @Success		200
 // @Failure		401

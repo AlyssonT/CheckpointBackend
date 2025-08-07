@@ -94,7 +94,7 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Get games
       tags:
       - Games
@@ -121,6 +121,40 @@ paths:
       summary: Login
       tags:
       - Authentication
+  /logout:
+    post:
+      description: Logout user
+      operationId: logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      summary: Logout
+      tags:
+      - Authentication
+  /me:
+    get:
+      description: Get user data from cookie token
+      operationId: cookie-token-user-data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - cookieAuth: []
+      summary: User data
+      tags:
+      - User
   /user/games:
     get:
       description: Get user games
@@ -134,7 +168,7 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Get user games
       tags:
       - User
@@ -157,7 +191,7 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Add game to user
       tags:
       - User
@@ -180,7 +214,7 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Delete user game
       tags:
       - User
@@ -208,7 +242,7 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Update user game
       tags:
       - User
@@ -225,7 +259,7 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Get user profile
       tags:
       - User
@@ -252,7 +286,7 @@ paths:
         "500":
           description: Internal Server Error
       security:
-      - BearerAuth: []
+      - cookieAuth: []
       summary: Update user details
       tags:
       - User
@@ -284,8 +318,8 @@ paths:
 schemes:
 - http
 securityDefinitions:
-  BearerAuth:
-    in: header
-    name: Authorization
+  cookieAuth:
+    in: cookie
+    name: auth_token
     type: apiKey
 swagger: "2.0"

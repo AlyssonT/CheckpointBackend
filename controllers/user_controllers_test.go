@@ -24,13 +24,14 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 
 	testServer := gin.Default()
 	dbtest := db.SetupTestDb(&models.User{}, &models.UserProfile{}, &models.Game{}, &models.UserGame{})
-	userControllers := NewUserControllers(handlers.NewHandlers(repositories.NewRepositories(dbtest)))
-	loginControllers := NewLoginControllers(handlers.NewHandlers(repositories.NewRepositories(dbtest)))
+	handlers := handlers.NewHandlers(repositories.NewRepositories(dbtest))
+	userControllers := NewUserControllers(handlers)
+	loginControllers := NewLoginControllers(handlers)
 
 	testServer.POST("/user", userControllers.RegisterUser)
 	testServer.POST("/login", loginControllers.Login)
 	authorized := testServer.Group("/")
-	authorized.Use(middlewares.Authenticate())
+	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
 	{
 		authorized.POST("/user/games", userControllers.AddGameToUser)
 	}
@@ -99,7 +100,7 @@ func TestAddGameToUser_Success(t *testing.T) {
 	server, db := setupApiForTest()
 	w := httptest.NewRecorder()
 
-	token := testutilities.RegisterFakeUser(server, w)
+	cookies := testutilities.RegisterFakeUser(server, w)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -111,7 +112,9 @@ func TestAddGameToUser_Success(t *testing.T) {
 
 	jsonRequest, _ := json.Marshal(add_game_request)
 	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
-	req.Header.Set("Authorization", "Bearer "+token)
+	for _, cookie := range cookies {
+		req.AddCookie(cookie)
+	}
 
 	w = httptest.NewRecorder()
 	server.ServeHTTP(w, req)
@@ -126,7 +129,7 @@ func TestAddGameToUser_FailValidation(t *testing.T) {
 	server, _ := setupApiForTest()
 	w := httptest.NewRecorder()
 
-	token := testutilities.RegisterFakeUser(server, w)
+	cookies := testutilities.RegisterFakeUser(server, w)
 
 	add_game_request := communication.AddGameToUserRequest{
 		Status: 5,
@@ -135,7 +138,9 @@ func TestAddGameToUser_FailValidation(t *testing.T) {
 
 	jsonRequest, _ := json.Marshal(add_game_request)
 	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
-	req.Header.Set("Authorization", "Bearer "+token)
+	for _, cookie := range cookies {
+		req.AddCookie(cookie)
+	}
 
 	w = httptest.NewRecorder()
 	server.ServeHTTP(w, req)
@@ -162,7 +167,7 @@ func TestAddGameToUser_FailGameDontExist(t *testing.T) {
 	server, _ := setupApiForTest()
 	w := httptest.NewRecorder()
 
-	token := testutilities.RegisterFakeUser(server, w)
+	cookies := testutilities.RegisterFakeUser(server, w)
 
 	add_game_request := communication.AddGameToUserRequest{
 		Game_id: 1,
@@ -173,7 +178,9 @@ func TestAddGameToUser_FailGameDontExist(t *testing.T) {
 
 	jsonRequest, _ := json.Marshal(add_game_request)
 	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
-	req.Header.Set("Authorization", "Bearer "+token)
+	for _, cookie := range cookies {
+		req.AddCookie(cookie)
+	}
 
 	w = httptest.NewRecorder()
 	server.ServeHTTP(w, req)

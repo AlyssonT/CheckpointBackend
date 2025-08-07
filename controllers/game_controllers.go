@@ -29,7 +29,7 @@ func NewGameControllers(handlers *handlers.Handlers) *GameController {
 // @Param			query		query	string	false	"Query for search"
 // @Router			/games [get]
 // @Tags			Games
-// @Security		BearerAuth
+// @Security		cookieAuth
 // @Success		200
 // @Failure		401
 // @Failure		500

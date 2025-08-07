@@ -1,8 +1,14 @@
 package interfaces
 
-import "github.com/golang-jwt/jwt/v5"
+type UserClaims struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	ID    uint   `json:"id"`
+	Exp   int64  `json:"exp"`
+}
 
 type JwtService interface {
 	GenerateToken(name string, email string, id uint) (string, error)
-	VerifyToken(token string) (jwt.MapClaims, error)
+	VerifyToken(token string) (*UserClaims, error)
+	ExtractClaims(claims map[string]any) (*UserClaims, error)
 }

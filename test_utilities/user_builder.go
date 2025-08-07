@@ -21,7 +21,7 @@ func BuildFakeUser() communication.RegisterUserRequest {
 	}
 }
 
-func RegisterFakeUser(server *gin.Engine, w *httptest.ResponseRecorder) string {
+func RegisterFakeUser(server *gin.Engine, w *httptest.ResponseRecorder) []*http.Cookie {
 	user := BuildFakeUser()
 	jsonRequest, _ := json.Marshal(user)
 
@@ -43,8 +43,7 @@ func RegisterFakeUser(server *gin.Engine, w *httptest.ResponseRecorder) string {
 	w = httptest.NewRecorder()
 	server.ServeHTTP(w, req)
 
-	var responseJSON map[string]string
-	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+	cookies := w.Result().Cookies()
 
-	return responseJSON["data"]
+	return cookies
 }

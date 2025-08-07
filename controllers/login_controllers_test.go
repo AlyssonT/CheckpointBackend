@@ -31,13 +31,24 @@ func TestLogin_Success(t *testing.T) {
 	req, _ = http.NewRequest("POST", "/login", bytes.NewReader(jsonRequest))
 	server.ServeHTTP(w, req)
 
-	var responseJSON map[string]string
-	json.Unmarshal(w.Body.Bytes(), &responseJSON)
-
 	assert.Equal(t, http.StatusOK, w.Code)
 
+	var authCookie *http.Cookie
+	cookies := w.Result().Cookies()
+	for _, cookie := range cookies {
+		if cookie.Name == "auth_token" {
+			authCookie = cookie
+			break
+		}
+	}
+
+	assert.NotNil(t, authCookie)
+	assert.True(t, authCookie.HttpOnly)
+	assert.True(t, authCookie.Secure)
+	assert.Equal(t, http.SameSiteStrictMode, authCookie.SameSite)
+
 	jwtService := services.NewJwt()
-	_, err := jwtService.VerifyToken(responseJSON["data"])
+	_, err := jwtService.VerifyToken(authCookie.Value)
 
 	assert.Nil(t, err)
 }
@@ -66,13 +77,19 @@ func TestLogin_Fail(t *testing.T) {
 		req, _ = http.NewRequest("POST", "/login", bytes.NewReader(jsonRequest))
 		server.ServeHTTP(w, req)
 
-		var responseJSON map[string]string
-		json.Unmarshal(w.Body.Bytes(), &responseJSON)
-
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 
+		cookies := w.Result().Cookies()
+		var token string
+		for _, cookie := range cookies {
+			if cookie.Name == "auth_token" {
+				token = cookie.Value
+				break
+			}
+		}
+
 		jwtService := services.NewJwt()
-		_, err := jwtService.VerifyToken(responseJSON["data"])
+		_, err := jwtService.VerifyToken(token)
 
 		assert.ErrorIs(t, exceptions.ErrorInvalidCredentials, err)
 	}

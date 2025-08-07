@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
@@ -50,10 +51,34 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 		return
 	}
 
+	ctx.SetSameSite(http.SameSiteStrictMode)
+	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", "", true, true)
+
 	response := &communication.ResponseDTO{
 		StatusCode: http.StatusOK,
 		Message:    "logged in",
-		Data:       token,
+		Data:       nil,
+	}
+	ctx.JSON(response.StatusCode, response)
+}
+
+// @Summary		Logout
+// @Description	Logout user
+// @ID				logout
+// @Produce		json
+// @Router			/logout [post]
+// @Tags			Authentication
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (lc *LoginController) Logout(ctx *gin.Context) {
+	ctx.SetSameSite(http.SameSiteStrictMode)
+	ctx.SetCookie("auth_token", "", -1, "/", "", true, true)
+
+	response := &communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "logged out",
+		Data:       nil,
 	}
 	ctx.JSON(response.StatusCode, response)
 }

@@ -19,7 +19,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Get a list of games",
@@ -99,11 +99,64 @@ const docTemplate = `{
                 }
             }
         },
+        "/logout": {
+            "post": {
+                "description": "Logout user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "description": "Get user data from cookie token",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "User data",
+                "operationId": "cookie-token-user-data",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/user/games": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Get user games",
@@ -129,7 +182,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Add a game to the user's collection",
@@ -168,7 +221,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Update user game",
@@ -212,7 +265,7 @@ const docTemplate = `{
             "delete": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Delete user game",
@@ -249,7 +302,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Get user profile",
@@ -275,7 +328,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "cookieAuth": []
                     }
                 ],
                 "description": "Update user profile details like bio, avatar etc.",
@@ -445,10 +498,10 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "BearerAuth": {
+        "cookieAuth": {
             "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
+            "name": "auth_token",
+            "in": "cookie"
         }
     }
 }`

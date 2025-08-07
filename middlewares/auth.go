@@ -1,18 +1,14 @@
 package middlewares
 
 import (
-	"strings"
-
 	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
-	"github.com/AlyssonT/CheckpointBackend/services"
+	"github.com/AlyssonT/CheckpointBackend/interfaces"
 	"github.com/gin-gonic/gin"
 )
 
-func Authenticate() gin.HandlerFunc {
+func Authenticate(jwtService interfaces.JwtService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		jwtService := services.NewJwt()
-		authHeader := ctx.GetHeader("Authorization")
-		token := strings.TrimSpace(strings.TrimPrefix(authHeader, "Bearer"))
+		token, _ := ctx.Cookie("auth_token")
 		claims, err := jwtService.VerifyToken(token)
 
 		if token == "" || err != nil {
@@ -21,15 +17,8 @@ func Authenticate() gin.HandlerFunc {
 			return
 		}
 
-		userID, ok := claims["id"].(float64)
-
-		if !ok {
-			response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
-			ctx.AbortWithStatusJSON(response.StatusCode, response)
-			return
-		}
-
-		ctx.Set("userID", uint(userID))
+		ctx.Set("userID", claims.ID)
+		ctx.Set("userData", *claims)
 		ctx.Next()
 	}
 }
