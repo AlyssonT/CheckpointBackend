@@ -17,7 +17,7 @@ type SteamApiHelper struct {
 
 func NewSteamApiHelper() *SteamApiHelper {
 	helper := &SteamApiHelper{
-		url:    configs.GetConfigs().SteamApiURL,
+		url:    configs.GetConfigsDbSync().SteamApiURL,
 		client: &http.Client{},
 	}
 	return helper
@@ -25,7 +25,7 @@ func NewSteamApiHelper() *SteamApiHelper {
 
 func NewSteamStoreApiHelper() *SteamApiHelper {
 	helper := &SteamApiHelper{
-		url:    configs.GetConfigs().SteamStoreApiURL,
+		url:    configs.GetConfigsDbSync().SteamStoreApiURL,
 		client: &http.Client{},
 	}
 	return helper

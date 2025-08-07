@@ -16,9 +16,9 @@ import (
 //	@title						Checkpoint API
 //	@version					1.0
 //	@description				Checkpoint API Docs.
-//	@securityDefinitions.apikey	BearerAuth
-//	@in							header
-//	@name						Authorization
+//	@securityDefinitions.apiKey	cookieAuth
+//	@in							cookie
+//	@name						auth_token
 //	@host						localhost:8080
 
 // @schemes	http
@@ -34,12 +34,12 @@ func main() {
 	server := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowAllOrigins = true
-	config.AllowMethods = []string{"POST", "GET", "PUT", "OPTIONS"}
+	config.AllowOrigins = []string{configs.GetConfigs().FrontendURL}
+	config.AllowMethods = []string{"POST", "GET", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
 	config.ExposeHeaders = []string{"Content-Length"}
 	config.AllowCredentials = true
-	config.MaxAge = 12 * time.Hour
+	config.MaxAge = 24 * time.Hour
 
 	server.Use(cors.New((config)))
 

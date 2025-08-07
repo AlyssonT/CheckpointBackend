@@ -12,13 +12,13 @@ import (
 type IGDBApiHelper struct {
 	body    string
 	route   string
-	configs *configs.Configs
+	configs *configs.ConfigsDbSync
 	client  *http.Client
 }
 
 func NewIGDBApiHelper() *IGDBApiHelper {
 	helper := &IGDBApiHelper{
-		configs: configs.GetConfigs(),
+		configs: configs.GetConfigsDbSync(),
 		client:  &http.Client{},
 	}
 	return helper

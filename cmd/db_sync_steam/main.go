@@ -151,7 +151,7 @@ func setupSignalHandler() {
 }
 
 func main() {
-	configs.BuildConfigs()
+	configs.BuildConfigsDbSync()
 	dbConnection := db.InitDb()
 
 	setupSignalHandler()
