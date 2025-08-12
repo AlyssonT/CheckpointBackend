@@ -73,7 +73,7 @@ func saveOnDb(apps *[]communication.SteamAppData, db *gorm.DB) {
 		var foundGame models.Game
 		result := db.Where(&models.Game{Game_id: app.Appid}).Take(&foundGame)
 
-		time.Sleep(time.Second / 24)
+		time.Sleep(time.Second / 8)
 
 		response, err := steamStoreApiHelper.Route("appdetails?appids=" + fmt.Sprintf("%d", app.Appid)).Run()
 		if err != nil {

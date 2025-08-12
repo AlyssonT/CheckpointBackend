@@ -32,7 +32,7 @@ func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) (*[]model
 	}
 	scope.Count(&totalItems)
 
-	scope = scope.Scopes(db.Paginate(&pagination))
+	scope = scope.Order("metacritic DESC").Scopes(db.Paginate(&pagination))
 	result := scope.Find(&games)
 
 	if result.Error != nil {

@@ -26,6 +26,7 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) (*[]communi
 		responseGames[i] = communication.Game{
 			ID:          game.ID,
 			Game_id:     game.Game_id,
+			Metacritic:  game.Metacritic,
 			Slug:        game.Slug,
 			Name:        game.Name,
 			Description: game.Description,
