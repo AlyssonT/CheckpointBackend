@@ -14,7 +14,45 @@ import (
 	"github.com/AlyssonT/CheckpointBackend/models"
 	"github.com/AlyssonT/CheckpointBackend/services"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
+
+func updateGenresTableByGameGenres(genres []communication.IGDBGenre, db *gorm.DB) {
+	for _, genre := range genres {
+		err := db.First(&models.Genre{ID: genre.Id}).Error
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			db.Create(&models.Genre{
+				ID:   genre.Id,
+				Name: genre.Name,
+			})
+		}
+	}
+}
+
+func addGenresToGame(genres []communication.IGDBGenre, game *models.Game, db *gorm.DB) {
+	if len(game.Genres) == 0 {
+		return
+	}
+	var game_genres_models []models.Genre
+	for _, game_genre := range genres {
+		var genre models.Genre
+		db.First(&genre, game_genre.Id)
+
+		game_genres_models = append(game_genres_models, genre)
+	}
+	if len(game_genres_models) > 0 {
+		db.Model(game).Association("Genres").Append(game_genres_models)
+	}
+}
+
+func getSteamHeaderImage(steamUrl string) string {
+	parts := strings.Split(steamUrl, "/")
+	if len(parts) < 5 || parts[3] != "app" {
+		return ""
+	}
+	return "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/" + parts[4] + "/header.jpg"
+}
 
 func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 	skipWords := []string{
@@ -23,7 +61,7 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 		"sexual", "sensual", "xxx", "fuck",
 		"suggestive", "intimate", "risqué",
 		"torture", "femboy", "girl", "cum",
-		"cumming", "dude",
+		"cumming", "dude", "mommy",
 	}
 
 	for _, game := range *games {
@@ -41,19 +79,40 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 			continue
 		}
 
+		var newImage string
+		if len(game.Websites) > 0 {
+			var steamUrl string
+			for _, website := range game.Websites {
+				if website.Category == 13 {
+					steamUrl = website.Url
+					break
+				}
+			}
+			newImage = getSteamHeaderImage(steamUrl)
+		}
+		if len(newImage) == 0 {
+			newImage = strings.Replace(game.Cover.Url, "t_thumb", "t_cover_big", 1)
+		}
+
+		if len(game.Genres) > 0 {
+			updateGenresTableByGameGenres(game.Genres, db)
+		}
+
 		var foundGame models.Game
 		result := db.Where(&models.Game{Game_id: game.Id}).Take(&foundGame)
 
-		newImage := strings.Replace(game.Cover.Url, "t_thumb", "t_720p", 1)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			db.Create(&models.Game{
+			newGame := &models.Game{
 				Game_id:     game.Id,
 				Slug:        game.Slug,
 				Name:        game.Name,
 				Description: game.Summary,
 				Imagem:      newImage,
+				Metacritic:  uint8(game.Total_rating),
 				UpdatedAt:   time.Now(),
-			})
+			}
+			db.Create(newGame)
+			addGenresToGame(game.Genres, newGame, db)
 		} else {
 			db.Model(&foundGame).Updates(models.Game{
 				Game_id:     game.Id,
@@ -61,6 +120,7 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 				Name:        game.Name,
 				Description: game.Summary,
 				Imagem:      newImage,
+				Metacritic:  uint8(game.Total_rating),
 				UpdatedAt:   time.Now(),
 			})
 		}
@@ -69,11 +129,12 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 
 func main() {
 	configs.BuildConfigsDbSync()
-	dbConnection := db.InitDb()
+	dbConnection := db.InitDb(logger.Silent)
 
 	igdbHelper := services.NewIGDBApiHelper()
 
-	for i := 0; i < 3; i += 1 {
+	for i := 0; i < 1000; i += 1 {
+		fmt.Println(i)
 		var games_id []string
 		response, err :=
 			igdbHelper.
@@ -96,7 +157,7 @@ func main() {
 		response, err =
 			igdbHelper.
 				Route("games").
-				Req("fields cover.url,name,summary,release_dates,slug;where id = (" + strings.Join(games_id, ",") + ");limit 500;").
+				Req("fields genres.name,total_rating,cover.url,name,summary,release_dates,slug,websites.*;where id = (" + strings.Join(games_id, ",") + ");limit 500;").
 				Run()
 		if err != nil {
 			log.Fatal("error on get igdb api data")
