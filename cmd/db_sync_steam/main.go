@@ -73,7 +73,7 @@ func saveOnDb(apps *[]communication.SteamAppData, db *gorm.DB) {
 		var foundGame models.Game
 		result := db.Where(&models.Game{Game_id: app.Appid}).Take(&foundGame)
 
-		time.Sleep(time.Second / 8)
+		time.Sleep(time.Second)
 
 		response, err := steamStoreApiHelper.Route("appdetails?appids=" + fmt.Sprintf("%d", app.Appid)).Run()
 		if err != nil {
@@ -92,41 +92,42 @@ func saveOnDb(apps *[]communication.SteamAppData, db *gorm.DB) {
 		}
 
 		for _, appData := range appResponse {
-			app := appData.Data
-			processedIds[fmt.Sprint(app.Game_id)] = true
-			if app.Type != "game" {
+			game := appData.Data
+			processedIds[fmt.Sprint(app.Appid)] = true
+			fmt.Println("added game to processedids", app.Appid)
+			if game.Type != "game" {
 				continue
 			}
 
-			if len(app.Genres) > 0 {
-				updateGenresTableByGameGenres(&app.Genres, db)
+			if len(game.Genres) > 0 {
+				updateGenresTableByGameGenres(&game.Genres, db)
 			}
 
 			metacriticScore := uint8(0)
-			if app.Metacritic.Score != 0 {
-				metacriticScore = app.Metacritic.Score
+			if game.Metacritic.Score != 0 {
+				metacriticScore = game.Metacritic.Score
 			}
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				newGame := &models.Game{
-					Game_id:     app.Game_id,
-					Slug:        strings.ToLower(strings.ReplaceAll(app.Name, " ", "")),
-					Name:        app.Name,
-					Description: app.Summary,
-					Imagem:      app.ImageURL,
+					Game_id:     game.Game_id,
+					Slug:        strings.ToLower(strings.ReplaceAll(game.Name, " ", "")),
+					Name:        game.Name,
+					Description: game.Summary,
+					Imagem:      game.ImageURL,
 					Metacritic:  metacriticScore,
 					UpdatedAt:   time.Now(),
 				}
 				db.Create(newGame)
-				if len(app.Genres) > 0 {
-					addGenresToGame(&app.Genres, newGame, db)
+				if len(game.Genres) > 0 {
+					addGenresToGame(&game.Genres, newGame, db)
 				}
 			} else {
 				db.Model(&foundGame).Updates(models.Game{
-					Game_id:     app.Game_id,
-					Slug:        strings.ToLower(strings.ReplaceAll(app.Name, " ", "")),
-					Name:        app.Name,
-					Description: app.Summary,
-					Imagem:      app.ImageURL,
+					Game_id:     game.Game_id,
+					Slug:        strings.ToLower(strings.ReplaceAll(game.Name, " ", "")),
+					Name:        game.Name,
+					Description: game.Summary,
+					Imagem:      game.ImageURL,
 					Metacritic:  metacriticScore,
 					UpdatedAt:   time.Now(),
 				})
