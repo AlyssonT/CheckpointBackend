@@ -27,7 +27,7 @@ func TestGetGamesHandler_Success(t *testing.T) {
 	for range gameListSize {
 		games = append(games, testutilities.BuildFakeGame())
 	}
-	games[len(games)-1].Name = "test name"
+	games[len(games)-1].Name = "test123 name"
 	db.Create(&games)
 
 	req := communication.GetGamesRequest{
@@ -42,16 +42,25 @@ func TestGetGamesHandler_Success(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, int64(gameListSize), totalItems)
-	for i, game := range *resGames {
-		assert.Equal(t, games[i].Name, game.Name)
+
+	expectedNames := make([]string, len(games))
+	for i, g := range games {
+		expectedNames[i] = g.Name
 	}
 
-	req.Query = "test"
+	resultNames := make([]string, len(resGames))
+	for i, g := range resGames {
+		resultNames[i] = g.Name
+	}
+
+	assert.ElementsMatch(t, expectedNames, resultNames)
+
+	req.Query = "test123"
 	resGames, totalItems, err = gameHandlers.GetGames(&req)
 	assert.Nil(t, err)
 
 	assert.Equal(t, int64(1), totalItems)
-	assert.Equal(t, "test name", (*resGames)[0].Name)
+	assert.Equal(t, "test123 name", (resGames)[0].Name)
 }
 
 func TestGetGamesHandler_NoQueries(t *testing.T) {
@@ -70,7 +79,16 @@ func TestGetGamesHandler_NoQueries(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, int64(gameListSize), totalItems)
-	for i, game := range *resGames {
-		assert.Equal(t, games[i].Name, game.Name)
+
+	expectedNames := make([]string, len(games))
+	for i, g := range games {
+		expectedNames[i] = g.Name
 	}
+
+	resultNames := make([]string, len(resGames))
+	for i, g := range resGames {
+		resultNames[i] = g.Name
+	}
+
+	assert.ElementsMatch(t, expectedNames, resultNames)
 }

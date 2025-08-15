@@ -41,3 +41,15 @@ func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) (*[]model
 
 	return &games, totalItems, nil
 }
+
+func (gr *GameRepository) GetGameById(gameId int) (*models.Game, error) {
+	var game models.Game
+
+	result := gr.dbConnection.Preload("Genres").Where("game_id = ?", gameId).First(&game)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &game, nil
+}

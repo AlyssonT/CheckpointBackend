@@ -62,3 +62,39 @@ func (gc *GameController) GetGames(ctx *gin.Context) {
 	}
 	ctx.JSON(response.StatusCode, response)
 }
+
+// @Summary		Get game by id
+// @Description	Get game by id
+// @ID				get-game-by-id
+// @Produce		json
+// @Router			/games/{gameId} [get]
+// @Param			gameId	path	string	true	"Game id"
+// @Tags			Games
+// @Security		cookieAuth
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (gc *GameController) GetGameById(ctx *gin.Context) {
+	pathId := ctx.Param("gameId")
+	gameId, err := strconv.Atoi(pathId)
+
+	if err != nil {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidGameId)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	game, err := gc.handlers.GetGameById(gameId)
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := &communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "",
+		Data:       game,
+	}
+	ctx.JSON(response.StatusCode, response)
+}

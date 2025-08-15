@@ -16,6 +16,7 @@ var (
 	ErrorInvalidAvatarData    = errors.New("invalid avatar data")
 	ErrorGameNotFound         = errors.New("game not found")
 	ErrorGameAlreadyAddedUser = errors.New("game already added for this user")
+	ErrorInvalidGameId        = errors.New("invalid game id")
 )
 
 var errorStatusMap = map[error]int{
@@ -25,6 +26,7 @@ var errorStatusMap = map[error]int{
 	ErrorGameNotFound:         http.StatusNotFound,
 	gorm.ErrRecordNotFound:    http.StatusNotFound,
 	ErrorGameAlreadyAddedUser: http.StatusConflict,
+	ErrorInvalidGameId:        http.StatusBadRequest,
 }
 
 func ErrorHandler(err error) communication.ResponseDTO {

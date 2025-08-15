@@ -15,7 +15,7 @@ func NewGameHandlers(repos *repositories.Respositories) *GameHandlers {
 	}
 }
 
-func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) (*[]communication.Game, int64, error) {
+func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) ([]communication.Game, int64, error) {
 	games, totalItems, err := gh.repository.GetGames(req)
 	if err != nil {
 		return nil, 0, err
@@ -34,5 +34,35 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) (*[]communi
 		}
 	}
 
-	return &responseGames, totalItems, nil
+	return responseGames, totalItems, nil
+}
+
+func (gh *GameHandlers) GetGameById(gameId int) (*communication.GameWithGenres, error) {
+	game, err := gh.repository.GetGameById(gameId)
+	if err != nil {
+		return nil, err
+	}
+
+	var genresResponse []communication.GenreResponseData
+	for _, genre := range game.Genres {
+		genresResponse = append(genresResponse, communication.GenreResponseData{
+			Id:          genre.ID,
+			Description: genre.Name,
+		})
+	}
+
+	gameResponse := communication.GameWithGenres{
+		Game: communication.Game{
+			ID:          game.ID,
+			Game_id:     game.Game_id,
+			Metacritic:  game.Metacritic,
+			Slug:        game.Slug,
+			Name:        game.Name,
+			Description: game.Description,
+			Imagem:      game.Imagem,
+		},
+		Genres: genresResponse,
+	}
+
+	return &gameResponse, nil
 }

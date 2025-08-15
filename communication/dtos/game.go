@@ -10,6 +10,16 @@ type Game struct {
 	Imagem      string `json:"imagem"`
 }
 
+type GenreResponseData struct {
+	Id          int    `json:"id"`
+	Description string `json:"description"`
+}
+
+type GameWithGenres struct {
+	Game
+	Genres []GenreResponseData `json:"genres"`
+}
+
 type GetGamesRequest struct {
 	PaginationRequest
 	Query string `json:"query"`
