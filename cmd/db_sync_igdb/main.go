@@ -31,7 +31,7 @@ func updateGenresTableByGameGenres(genres []communication.IGDBGenre, db *gorm.DB
 }
 
 func addGenresToGame(genres []communication.IGDBGenre, game *models.Game, db *gorm.DB) {
-	if len(game.Genres) == 0 {
+	if len(genres) == 0 {
 		return
 	}
 	var game_genres_models []models.Genre
@@ -46,14 +46,6 @@ func addGenresToGame(genres []communication.IGDBGenre, game *models.Game, db *go
 	}
 }
 
-func getSteamHeaderImage(steamUrl string) string {
-	parts := strings.Split(steamUrl, "/")
-	if len(parts) < 5 || parts[3] != "app" {
-		return ""
-	}
-	return "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/" + parts[4] + "/header.jpg"
-}
-
 func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 	skipWords := []string{
 		"sexy", "sex", "nude", "nudity",
@@ -61,7 +53,7 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 		"sexual", "sensual", "xxx", "fuck",
 		"suggestive", "intimate", "risqué",
 		"torture", "femboy", "girl", "cum",
-		"cumming", "dude", "mommy",
+		"cumming", "dude", "mommy", "hentai", "harem",
 	}
 
 	for _, game := range *games {
@@ -79,20 +71,7 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 			continue
 		}
 
-		var newImage string
-		if len(game.Websites) > 0 {
-			var steamUrl string
-			for _, website := range game.Websites {
-				if website.Category == 13 {
-					steamUrl = website.Url
-					break
-				}
-			}
-			newImage = getSteamHeaderImage(steamUrl)
-		}
-		if len(newImage) == 0 {
-			newImage = strings.Replace(game.Cover.Url, "t_thumb", "t_cover_big", 1)
-		}
+		newImage := strings.Replace(game.Cover.Url, "t_thumb", "t_cover_big_2x", 1)
 
 		if len(game.Genres) > 0 {
 			updateGenresTableByGameGenres(game.Genres, db)
