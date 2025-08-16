@@ -1,13 +1,14 @@
 package communication
 
 type Game struct {
-	ID          uint   `json:"id"`
-	Game_id     uint   `json:"game_id"`
-	Metacritic  uint8  `json:"metacritic"`
-	Slug        string `json:"slug"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Imagem      string `json:"imagem"`
+	ID          uint                `json:"id"`
+	Game_id     uint                `json:"game_id"`
+	Metacritic  uint8               `json:"metacritic"`
+	Slug        string              `json:"slug"`
+	Name        string              `json:"name"`
+	Description string              `json:"description"`
+	Imagem      string              `json:"imagem"`
+	Genres      []GenreResponseData `json:"genres"`
 }
 
 type GenreResponseData struct {

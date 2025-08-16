@@ -23,6 +23,13 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) ([]communic
 
 	responseGames := make([]communication.Game, len(*games))
 	for i, game := range *games {
+		var gameGenres []communication.GenreResponseData
+		for _, genre := range game.Genres {
+			gameGenres = append(gameGenres, communication.GenreResponseData{
+				Id:          genre.ID,
+				Description: genre.Name,
+			})
+		}
 		responseGames[i] = communication.Game{
 			ID:          game.ID,
 			Game_id:     game.Game_id,
@@ -31,6 +38,7 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) ([]communic
 			Name:        game.Name,
 			Description: game.Description,
 			Imagem:      game.Imagem,
+			Genres:      gameGenres,
 		}
 	}
 

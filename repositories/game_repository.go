@@ -26,7 +26,7 @@ func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) (*[]model
 	var games []models.Game
 	var totalItems int64
 
-	scope := gr.dbConnection.Model(&models.Game{})
+	scope := gr.dbConnection.Preload("Genres").Model(&models.Game{})
 	if req.Query != "" {
 		scope = scope.Where("name LIKE ?", "%"+req.Query+"%")
 	}
