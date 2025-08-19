@@ -45,11 +45,56 @@ func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) (*[]model
 func (gr *GameRepository) GetGameById(gameId int) (*models.Game, error) {
 	var game models.Game
 
-	result := gr.dbConnection.Preload("Genres").Where("game_id = ?", gameId).First(&game)
+	result := gr.dbConnection.Preload("Genres").Model(&models.Game{}).
+		Where("game_id = ?", gameId).
+		First(&game)
 
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
 	return &game, nil
+}
+
+func (gr *GameRepository) GetGameReviewsData(
+	gameId int,
+	request *communication.GameReviewsRequest,
+) ([]models.UserGame, *communication.ReviewsAdditionalData, int64, error) {
+	var gameReviews []models.UserGame
+
+	scope := gr.dbConnection.Model(&models.UserGame{}).Preload("User").Where("game_id = ?", gameId)
+
+	var totalItems int64
+	err := scope.Count(&totalItems).Error
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
+	var reviewsAdditionalData communication.ReviewsAdditionalData
+	err = gr.dbConnection.Model(&models.UserGame{}).
+		Where("game_id = ?", gameId).
+		Select(`
+			COALESCE(AVG(score), 0) AS average_rating,
+			SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS playing,
+			SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS finished,
+			SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS backlog,
+			SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS dropped
+		`,
+			communication.StatusPlaying,
+			communication.StatusFinished,
+			communication.StatusBacklog,
+			communication.StatusDropped,
+		).
+		Scan(&reviewsAdditionalData).Error
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
+	scope = scope.Scopes(db.Paginate(&request.PaginationRequest))
+	err = scope.Find(&gameReviews).Error
+	if err != nil {
+		return nil, nil, 0, err
+	}
+
+	return gameReviews, &reviewsAdditionalData, totalItems, nil
 }

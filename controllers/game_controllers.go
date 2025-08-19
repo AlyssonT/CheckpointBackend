@@ -98,3 +98,51 @@ func (gc *GameController) GetGameById(ctx *gin.Context) {
 	}
 	ctx.JSON(response.StatusCode, response)
 }
+
+// @Summary		Get game reviews
+// @Description	Get game reviews
+// @ID				get-game-reviews
+// @Produce		json
+// @Router			/games/{gameId}/reviews [get]
+// @Param			page		query	int		false	"Page index"
+// @Param			pageSize	query	int		false	"Page size"
+// @Param			gameId		path	string	true	"Game id"
+// @Tags			Games
+// @Security		cookieAuth
+// @Success		200
+// @Failure		401
+// @Failure		500
+func (gc *GameController) GetGameReviews(ctx *gin.Context) {
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "10"))
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+
+	pathId := ctx.Param("gameId")
+	gameId, err := strconv.Atoi(pathId)
+
+	if err != nil {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidGameId)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	request := communication.GameReviewsRequest{
+		PaginationRequest: communication.PaginationRequest{
+			Page:     page,
+			PageSize: pageSize,
+		},
+	}
+
+	gameReviews, err := gc.handlers.GetGameReviews(gameId, &request)
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := &communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "",
+		Data:       gameReviews,
+	}
+	ctx.JSON(response.StatusCode, response)
+}

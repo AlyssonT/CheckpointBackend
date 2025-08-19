@@ -26,9 +26,36 @@ type GetGamesRequest struct {
 	Query string `json:"query"`
 }
 
+type UserReview struct {
+	UserId   uint   `json:"userId"`
+	GameId   uint   `json:"gameId"`
+	Username string `json:"username"`
+	Review   string `json:"review"`
+	Status   uint   `json:"status"`
+	Score    uint   `json:"score"`
+}
+
+type ReviewsAdditionalData struct {
+	AverageRating uint `json:"averageRating"`
+	Playing       uint `json:"playing"`
+	Finished      uint `json:"finished"`
+	Backlog       uint `json:"backlog"`
+	Dropped       uint `json:"dropped"`
+}
+
+type GameReviewsResponse struct {
+	ReviewsAdditionalData
+	Reviews    []UserReview `json:"reviews"`
+	TotalItems int64        `json:"totalItems"`
+}
+
+type GameReviewsRequest struct {
+	PaginationRequest
+}
+
 const (
 	StatusPlaying = iota
-	StatusCompleted
-	StatusWanted
+	StatusFinished
+	StatusBacklog
 	StatusDropped
 )

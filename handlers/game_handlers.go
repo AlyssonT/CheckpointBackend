@@ -23,12 +23,12 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) ([]communic
 
 	responseGames := make([]communication.Game, len(*games))
 	for i, game := range *games {
-		var gameGenres []communication.GenreResponseData
-		for _, genre := range game.Genres {
-			gameGenres = append(gameGenres, communication.GenreResponseData{
+		genresResponse := make([]communication.GenreResponseData, len(game.Genres))
+		for i, genre := range game.Genres {
+			genresResponse[i] = communication.GenreResponseData{
 				Id:          genre.ID,
 				Description: genre.Name,
-			})
+			}
 		}
 		responseGames[i] = communication.Game{
 			ID:          game.ID,
@@ -38,7 +38,7 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) ([]communic
 			Name:        game.Name,
 			Description: game.Description,
 			Imagem:      game.Imagem,
-			Genres:      gameGenres,
+			Genres:      genresResponse,
 		}
 	}
 
@@ -51,12 +51,12 @@ func (gh *GameHandlers) GetGameById(gameId int) (*communication.GameWithGenres, 
 		return nil, err
 	}
 
-	var genresResponse []communication.GenreResponseData
-	for _, genre := range game.Genres {
-		genresResponse = append(genresResponse, communication.GenreResponseData{
+	genresResponse := make([]communication.GenreResponseData, len(game.Genres))
+	for i, genre := range game.Genres {
+		genresResponse[i] = communication.GenreResponseData{
 			Id:          genre.ID,
 			Description: genre.Name,
-		})
+		}
 	}
 
 	gameResponse := communication.GameWithGenres{
@@ -73,4 +73,30 @@ func (gh *GameHandlers) GetGameById(gameId int) (*communication.GameWithGenres, 
 	}
 
 	return &gameResponse, nil
+}
+
+func (gh *GameHandlers) GetGameReviews(gameId int, request *communication.GameReviewsRequest) (*communication.GameReviewsResponse, error) {
+	gameReviews, reviewsAdditionalData, totalItems, err := gh.repository.GetGameReviewsData(gameId, request)
+	if err != nil {
+		return nil, err
+	}
+
+	reviewsMapped := make([]communication.UserReview, len(gameReviews))
+	for i, review := range gameReviews {
+		reviewsMapped[i] = communication.UserReview{
+			UserId:   review.UserID,
+			GameId:   review.GameID,
+			Username: review.User.Name,
+			Review:   review.UserReview,
+			Status:   review.Status,
+			Score:    review.Score,
+		}
+	}
+	gameReviewsResponse := communication.GameReviewsResponse{
+		ReviewsAdditionalData: *reviewsAdditionalData,
+		Reviews:               reviewsMapped,
+		TotalItems:            totalItems,
+	}
+
+	return &gameReviewsResponse, nil
 }

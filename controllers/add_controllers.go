@@ -33,6 +33,7 @@ func DefineControllers(handlers *handlers.Handlers, server *gin.Engine) {
 		authorized.POST("/logout", controllers.LoginController.Logout)
 		authorized.GET("/games", controllers.GameController.GetGames)
 		authorized.GET("/games/:gameId", controllers.GameController.GetGameById)
+		authorized.GET("/games/:gameId/reviews", controllers.GameController.GetGameReviews)
 		authorized.GET("/user/profile", controllers.UserController.GetUserProfile)
 		authorized.PUT("/user/profile", controllers.UserController.UpdateUserProfileDetails)
 		authorized.POST("/user/games", controllers.UserController.AddGameToUser)
