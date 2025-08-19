@@ -1,7 +1,6 @@
 package communication
 
 type Game struct {
-	ID          uint                `json:"id"`
 	Game_id     uint                `json:"game_id"`
 	Metacritic  uint8               `json:"metacritic"`
 	Slug        string              `json:"slug"`

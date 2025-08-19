@@ -31,7 +31,6 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) ([]communic
 			}
 		}
 		responseGames[i] = communication.Game{
-			ID:          game.ID,
 			Game_id:     game.Game_id,
 			Metacritic:  game.Metacritic,
 			Slug:        game.Slug,
@@ -61,7 +60,6 @@ func (gh *GameHandlers) GetGameById(gameId int) (*communication.GameWithGenres, 
 
 	gameResponse := communication.GameWithGenres{
 		Game: communication.Game{
-			ID:          game.ID,
 			Game_id:     game.Game_id,
 			Metacritic:  game.Metacritic,
 			Slug:        game.Slug,

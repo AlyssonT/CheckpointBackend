@@ -136,7 +136,7 @@ func (ur *UserRepository) AddGameToUser(userID uint, game_data *communication.Ad
 	return nil
 }
 
-func (ur *UserRepository) GetUserGames(userID uint) (*[]models.UserGame, error) {
+func (ur *UserRepository) GetUserGames(userID uint) ([]models.UserGame, error) {
 	var user_games []models.UserGame
 	result := ur.dbConnection.
 		Preload("Game").
@@ -147,7 +147,7 @@ func (ur *UserRepository) GetUserGames(userID uint) (*[]models.UserGame, error) 
 		return nil, result.Error
 	}
 
-	return &user_games, nil
+	return user_games, nil
 }
 
 func (ur *UserRepository) UpdateUserGame(userID uint, game_id uint, game_data *communication.UpdateGameToUserRequest) error {

@@ -3,8 +3,7 @@ package models
 import "time"
 
 type Game struct {
-	ID          uint   `gorm:"primaryKey;autoIncrement"`
-	Game_id     uint   `gorm:"unique;not null"`
+	Game_id     uint   `gorm:"primaryKey"`
 	Slug        string `gorm:"unique;not null"`
 	Name        string `gorm:"not null"`
 	Description string `gorm:"not null"`

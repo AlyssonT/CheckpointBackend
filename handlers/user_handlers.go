@@ -99,24 +99,29 @@ func (uh *UserHandlers) DeleteGameToUser(userID uint, request *communication.Del
 	return uh.repository.DeleteUserGame(userID, request.Game_id)
 }
 
-func (uh *UserHandlers) GetUserGames(userID uint) (*[]communication.UserGamesResponse, error) {
+func (uh *UserHandlers) GetUserGames(userID uint) ([]communication.UserGamesResponse, error) {
 	userGames, err := uh.repository.GetUserGames(userID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	games := make([]communication.UserGamesResponse, len(*userGames))
-	for i, game := range *userGames {
+	games := make([]communication.UserGamesResponse, len(userGames))
+	for i, game := range userGames {
 		games[i] = communication.UserGamesResponse{
-			Game_id:        game.GameID,
-			Game_name:      game.Game.Name,
-			Game_image_url: game.Game.Imagem,
-			Status:         game.Status,
-			Score:          game.Score,
-			Review:         game.UserReview,
+			Game: communication.Game{
+				Game_id:     game.Game.Game_id,
+				Metacritic:  game.Game.Metacritic,
+				Slug:        game.Game.Slug,
+				Name:        game.Game.Name,
+				Description: game.Game.Description,
+				Imagem:      game.Game.Imagem,
+			},
+			Status: game.Status,
+			Score:  game.Score,
+			Review: game.UserReview,
 		}
 	}
 
-	return &games, nil
+	return games, nil
 }

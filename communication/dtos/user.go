@@ -45,10 +45,8 @@ type DeleteGameToUserRequest struct {
 }
 
 type UserGamesResponse struct {
-	Game_id        uint   `json:"game_id"`
-	Game_name      string `json:"game_name"`
-	Game_image_url string `json:"game_image_url"`
-	Status         uint   `json:"status"`
-	Score          uint   `json:"score"`
-	Review         string `json:"review"`
+	Game   `json:"game"`
+	Status uint   `json:"status"`
+	Score  uint   `json:"score"`
+	Review string `json:"review"`
 }

@@ -32,5 +32,5 @@ func RegisterFakeGame(db *gorm.DB) uint {
 		log.Fatal("failed to register fake game")
 	}
 
-	return game.ID
+	return game.Game_id
 }
