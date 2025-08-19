@@ -1,10 +1,9 @@
 package controllers
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
@@ -34,6 +33,7 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
 	{
 		authorized.POST("/user/games", userControllers.AddGameToUser)
+		authorized.PUT("/user/games/:gameId", userControllers.UpdateGameToUser)
 	}
 
 	return testServer, dbtest
@@ -41,45 +41,34 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 
 func TestRegisterUser_Success(t *testing.T) {
 	server, _ := setupApiForTest()
-	w := httptest.NewRecorder()
-
 	user := testutilities.BuildFakeUser()
-	jsonRequest, _ := json.Marshal(user)
 
-	req, _ := http.NewRequest("POST", "/user", bytes.NewReader(jsonRequest))
-	server.ServeHTTP(w, req)
+	w := testutilities.MakeRequest(server, "POST", "/user", user, nil)
 
 	var responseJSON map[string]string
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
 
-	w = httptest.NewRecorder()
 	login := communication.LoginRequest{
 		Email:    user.Email,
 		Password: user.Password,
 	}
-	jsonRequest, _ = json.Marshal(login)
-	req, _ = http.NewRequest("POST", "/login", bytes.NewReader(jsonRequest))
-	server.ServeHTTP(w, req)
+
+	w = testutilities.MakeRequest(server, "POST", "/login", login, nil)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestValidateUser(t *testing.T) {
 	server, _ := setupApiForTest()
-	w := httptest.NewRecorder()
-
 	user := communication.RegisterUserRequest{
 		Name:     "",
 		Password: "123",
 		Email:    "invalid email",
 	}
 
-	jsonRequest, _ := json.Marshal(user)
-
-	req, _ := http.NewRequest("POST", "/user", bytes.NewReader(jsonRequest))
-	server.ServeHTTP(w, req)
+	w := testutilities.MakeRequest(server, "POST", "/user", user, nil)
 
 	messages, err := testutilities.ExtractAllMessagesFromResponse(w)
 	if err != nil {
@@ -98,9 +87,8 @@ func TestValidateUser(t *testing.T) {
 
 func TestAddGameToUser_Success(t *testing.T) {
 	server, db := setupApiForTest()
-	w := httptest.NewRecorder()
 
-	cookies := testutilities.RegisterFakeUser(server, w)
+	cookies := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -110,14 +98,7 @@ func TestAddGameToUser_Success(t *testing.T) {
 		Review:  "Great game!",
 	}
 
-	jsonRequest, _ := json.Marshal(add_game_request)
-	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
-	for _, cookie := range cookies {
-		req.AddCookie(cookie)
-	}
-
-	w = httptest.NewRecorder()
-	server.ServeHTTP(w, req)
+	w := testutilities.MakeRequest(server, "POST", "/user/games", add_game_request, cookies)
 
 	var responseJSON communication.ResponseDTO
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
@@ -127,23 +108,14 @@ func TestAddGameToUser_Success(t *testing.T) {
 
 func TestAddGameToUser_FailValidation(t *testing.T) {
 	server, _ := setupApiForTest()
-	w := httptest.NewRecorder()
-
-	cookies := testutilities.RegisterFakeUser(server, w)
+	cookies := testutilities.RegisterFakeUser(server)
 
 	add_game_request := communication.AddGameToUserRequest{
 		Status: 5,
 		Score:  101,
 	}
 
-	jsonRequest, _ := json.Marshal(add_game_request)
-	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
-	for _, cookie := range cookies {
-		req.AddCookie(cookie)
-	}
-
-	w = httptest.NewRecorder()
-	server.ServeHTTP(w, req)
+	w := testutilities.MakeRequest(server, "POST", "/user/games", add_game_request, cookies)
 
 	var responseJSON communication.ResponseDTO
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
@@ -165,9 +137,7 @@ func TestAddGameToUser_FailValidation(t *testing.T) {
 
 func TestAddGameToUser_FailGameDontExist(t *testing.T) {
 	server, _ := setupApiForTest()
-	w := httptest.NewRecorder()
-
-	cookies := testutilities.RegisterFakeUser(server, w)
+	cookies := testutilities.RegisterFakeUser(server)
 
 	add_game_request := communication.AddGameToUserRequest{
 		Game_id: 1,
@@ -176,17 +146,41 @@ func TestAddGameToUser_FailGameDontExist(t *testing.T) {
 		Review:  "Great game!",
 	}
 
-	jsonRequest, _ := json.Marshal(add_game_request)
-	req, _ := http.NewRequest("POST", "/user/games", bytes.NewReader(jsonRequest))
-	for _, cookie := range cookies {
-		req.AddCookie(cookie)
-	}
-
-	w = httptest.NewRecorder()
-	server.ServeHTTP(w, req)
+	w := testutilities.MakeRequest(server, "POST", "/user/games", add_game_request, cookies)
 
 	var responseJSON communication.ResponseDTO
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
+}
+
+func TestUpdateGameToUser_Success(t *testing.T) {
+	server, db := setupApiForTest()
+
+	cookies := testutilities.RegisterFakeUser(server)
+	game_id := testutilities.RegisterFakeGame(db)
+
+	add_game_request := communication.AddGameToUserRequest{
+		Game_id: game_id,
+		Status:  0,
+		Score:   90,
+		Review:  "Great game!",
+	}
+
+	w := testutilities.MakeRequest(server, "POST", "/user/games", add_game_request, cookies)
+
+	var responseJSON communication.ResponseDTO
+	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	update_game_request := communication.UpdateGameToUserRequest{
+		Status: 1,
+		Score:  95,
+		Review: "Amazing game!",
+	}
+
+	w = testutilities.MakeRequest(server, "PUT", fmt.Sprintf("/user/games/%d", game_id), update_game_request, cookies)
+
+	assert.Equal(t, http.StatusOK, w.Code)
 }

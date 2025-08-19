@@ -1,10 +1,7 @@
 package controllers
 
 import (
-	"bytes"
-	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
@@ -16,20 +13,13 @@ import (
 
 func TestLogin_Success(t *testing.T) {
 	server, _ := setupApiForTest()
-	w := httptest.NewRecorder()
 
 	user := testutilities.BuildFakeUser()
 	password := user.Password
-	jsonRequest, _ := json.Marshal(user)
 
-	req, _ := http.NewRequest("POST", "/user", bytes.NewReader(jsonRequest))
-	server.ServeHTTP(w, req)
+	testutilities.MakeRequest(server, "POST", "/user", user, nil)
 
-	w = httptest.NewRecorder()
-	jsonRequest, _ = json.Marshal(&communication.LoginRequest{Email: user.Email, Password: password})
-
-	req, _ = http.NewRequest("POST", "/login", bytes.NewReader(jsonRequest))
-	server.ServeHTTP(w, req)
+	w := testutilities.MakeRequest(server, "POST", "/login", communication.LoginRequest{Email: user.Email, Password: password}, nil)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
@@ -55,14 +45,11 @@ func TestLogin_Success(t *testing.T) {
 
 func TestLogin_Fail(t *testing.T) {
 	server, _ := setupApiForTest()
-	w := httptest.NewRecorder()
 
 	user := testutilities.BuildFakeUser()
 	password := user.Password
-	jsonRequest, _ := json.Marshal(user)
 
-	req, _ := http.NewRequest("POST", "/user", bytes.NewReader(jsonRequest))
-	server.ServeHTTP(w, req)
+	testutilities.MakeRequest(server, "POST", "/user", user, nil)
 
 	loginRequestList := []communication.LoginRequest{
 		{Email: "another@email.com", Password: password},
@@ -71,11 +58,7 @@ func TestLogin_Fail(t *testing.T) {
 	}
 
 	for _, request := range loginRequestList {
-		w = httptest.NewRecorder()
-		jsonRequest, _ = json.Marshal(&request)
-
-		req, _ = http.NewRequest("POST", "/login", bytes.NewReader(jsonRequest))
-		server.ServeHTTP(w, req)
+		w := testutilities.MakeRequest(server, "POST", "/login", request, nil)
 
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 

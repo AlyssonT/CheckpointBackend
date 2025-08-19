@@ -13,7 +13,7 @@ var f = faker.New()
 
 func BuildFakeGame() models.Game {
 	return models.Game{
-		Game_id:     f.UInt(),
+		Game_id:     f.UIntBetween(1, 1000000),
 		Slug:        f.RandomStringWithLength(10),
 		Name:        f.App().Name(),
 		Description: f.App().Name(),

@@ -1,9 +1,13 @@
 package testutilities
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"net/http"
 	"net/http/httptest"
+
+	"github.com/gin-gonic/gin"
 )
 
 func ExtractAllMessagesFromResponse(w *httptest.ResponseRecorder) ([]string, error) {
@@ -27,4 +31,29 @@ func ExtractAllMessagesFromResponse(w *httptest.ResponseRecorder) ([]string, err
 	}
 
 	return messages, nil
+}
+
+func addCookiesToRequest(req *http.Request, cookies []*http.Cookie) {
+	for _, cookie := range cookies {
+		req.AddCookie(cookie)
+	}
+}
+
+func MakeRequest(server *gin.Engine, method, path string, body any, cookies []*http.Cookie) *httptest.ResponseRecorder {
+	var reqBody *bytes.Reader
+	if body != nil {
+		jsonData, _ := json.Marshal(body)
+		reqBody = bytes.NewReader(jsonData)
+	} else {
+		reqBody = bytes.NewReader([]byte{})
+	}
+
+	req, _ := http.NewRequest(method, path, reqBody)
+	if cookies != nil {
+		addCookiesToRequest(req, cookies)
+	}
+
+	w := httptest.NewRecorder()
+	server.ServeHTTP(w, req)
+	return w
 }

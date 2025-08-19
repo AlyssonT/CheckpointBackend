@@ -1,11 +1,8 @@
 package testutilities
 
 import (
-	"bytes"
-	"encoding/json"
 	"log"
 	"net/http"
-	"net/http/httptest"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/gin-gonic/gin"
@@ -21,12 +18,10 @@ func BuildFakeUser() communication.RegisterUserRequest {
 	}
 }
 
-func RegisterFakeUser(server *gin.Engine, w *httptest.ResponseRecorder) []*http.Cookie {
+func RegisterFakeUser(server *gin.Engine) []*http.Cookie {
 	user := BuildFakeUser()
-	jsonRequest, _ := json.Marshal(user)
 
-	req, _ := http.NewRequest("POST", "/user", bytes.NewReader(jsonRequest))
-	server.ServeHTTP(w, req)
+	w := MakeRequest(server, "POST", "/user", user, nil)
 
 	if w.Code != http.StatusCreated {
 		log.Fatal("failed to register fake user")
@@ -37,11 +32,7 @@ func RegisterFakeUser(server *gin.Engine, w *httptest.ResponseRecorder) []*http.
 		Password: user.Password,
 	}
 
-	jsonRequest, _ = json.Marshal(login_request)
-	req, _ = http.NewRequest("POST", "/login", bytes.NewReader(jsonRequest))
-
-	w = httptest.NewRecorder()
-	server.ServeHTTP(w, req)
+	w = MakeRequest(server, "POST", "/login", login_request, nil)
 
 	cookies := w.Result().Cookies()
 
