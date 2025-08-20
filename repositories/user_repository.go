@@ -150,6 +150,20 @@ func (ur *UserRepository) GetUserGames(userID uint) ([]models.UserGame, error) {
 	return user_games, nil
 }
 
+func (ur *UserRepository) GetUserGameById(userID uint, gameId uint) (*models.UserGame, error) {
+	var user_game models.UserGame
+	result := ur.dbConnection.
+		Preload("Game").
+		Where("user_id = ? AND game_id = ?", userID, gameId).
+		First(&user_game)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user_game, nil
+}
+
 func (ur *UserRepository) UpdateUserGame(userID uint, game_id uint, game_data *communication.UpdateGameToUserRequest) error {
 	var userGame models.UserGame
 	result := ur.dbConnection.Where("user_id = ? AND game_id = ?", userID, game_id).First(&userGame)

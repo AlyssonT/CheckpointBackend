@@ -274,6 +274,30 @@ paths:
       summary: Delete user game
       tags:
       - User
+    get:
+      description: Get user game by id
+      parameters:
+      - description: Game ID
+        in: path
+        name: gameId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      security:
+      - cookieAuth: []
+      summary: Get user game
+      tags:
+      - User
     put:
       description: Update user game
       parameters:

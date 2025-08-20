@@ -378,3 +378,52 @@ func (uc *UserController) GetUserGames(ctx *gin.Context) {
 	}
 	ctx.JSON(response.StatusCode, response)
 }
+
+// @Summary		Get user game
+// @Description	Get user game by id
+// @Tags			User
+// @Produce		json
+// @Security		cookieAuth
+// @Router			/user/games/{gameId} [get]
+// @Param			gameId	path	string	true	"Game ID"
+// @Success		200
+// @Failure		401
+// @Failure		404
+// @Failure		500
+func (uc *UserController) GetUserGameById(ctx *gin.Context) {
+	userID, exists := ctx.Get("userID")
+	parsedID, ok := userID.(uint)
+
+	if !exists || !ok {
+		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	game_id := ctx.Param("gameId")
+	parsedGameId, err := strconv.ParseUint(game_id, 10, 32)
+
+	if err != nil {
+		response := communication.ResponseDTO{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid game ID",
+			Data:       nil,
+		}
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	game, err := uc.handlers.GetUserGameById(parsedID, uint(parsedGameId))
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := &communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "",
+		Data:       game,
+	}
+	ctx.JSON(response.StatusCode, response)
+}

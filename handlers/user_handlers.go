@@ -125,3 +125,27 @@ func (uh *UserHandlers) GetUserGames(userID uint) ([]communication.UserGamesResp
 
 	return games, nil
 }
+
+func (uh *UserHandlers) GetUserGameById(userID uint, gameId uint) (*communication.UserGamesResponse, error) {
+	userGame, err := uh.repository.GetUserGameById(userID, gameId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	game := communication.UserGamesResponse{
+		Game: communication.Game{
+			Game_id:     userGame.UserID,
+			Metacritic:  userGame.Game.Metacritic,
+			Slug:        userGame.Game.Slug,
+			Name:        userGame.Game.Name,
+			Description: userGame.Game.Description,
+			Imagem:      userGame.Game.Imagem,
+		},
+		Status: userGame.Status,
+		Score:  userGame.Score,
+		Review: userGame.UserReview,
+	}
+
+	return &game, nil
+}
