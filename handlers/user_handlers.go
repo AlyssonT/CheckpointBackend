@@ -99,16 +99,16 @@ func (uh *UserHandlers) DeleteGameToUser(userID uint, request *communication.Del
 	return uh.repository.DeleteUserGame(userID, request.Game_id)
 }
 
-func (uh *UserHandlers) GetUserGames(userID uint) ([]communication.UserGamesResponse, error) {
-	userGames, err := uh.repository.GetUserGames(userID)
+func (uh *UserHandlers) GetUserGames(userID uint) ([]communication.UserGame, int64, error) {
+	userGames, totalItems, err := uh.repository.GetUserGames(userID)
 
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	games := make([]communication.UserGamesResponse, len(userGames))
+	games := make([]communication.UserGame, len(userGames))
 	for i, game := range userGames {
-		games[i] = communication.UserGamesResponse{
+		games[i] = communication.UserGame{
 			Game: communication.Game{
 				Game_id:     game.Game.Game_id,
 				Metacritic:  game.Game.Metacritic,
@@ -123,17 +123,17 @@ func (uh *UserHandlers) GetUserGames(userID uint) ([]communication.UserGamesResp
 		}
 	}
 
-	return games, nil
+	return games, totalItems, nil
 }
 
-func (uh *UserHandlers) GetUserGameById(userID uint, gameId uint) (*communication.UserGamesResponse, error) {
+func (uh *UserHandlers) GetUserGameById(userID uint, gameId uint) (*communication.UserGame, error) {
 	userGame, err := uh.repository.GetUserGameById(userID, gameId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	game := communication.UserGamesResponse{
+	game := communication.UserGame{
 		Game: communication.Game{
 			Game_id:     userGame.UserID,
 			Metacritic:  userGame.Game.Metacritic,

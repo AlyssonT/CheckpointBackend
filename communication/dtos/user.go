@@ -44,9 +44,14 @@ type DeleteGameToUserRequest struct {
 	Game_id uint `json:"game_id" binding:"required"`
 }
 
-type UserGamesResponse struct {
+type UserGame struct {
 	Game   `json:"game"`
 	Status uint   `json:"status"`
 	Score  uint   `json:"score"`
 	Review string `json:"review"`
+}
+
+type UserGamesResponse struct {
+	Games      []UserGame `json:"games"`
+	TotalItems int64      `json:"totalItems"`
 }

@@ -364,7 +364,7 @@ func (uc *UserController) GetUserGames(ctx *gin.Context) {
 		return
 	}
 
-	games, err := uc.handlers.GetUserGames(parsedID)
+	games, totalItems, err := uc.handlers.GetUserGames(parsedID)
 	if err != nil {
 		response := exceptions.ErrorHandler(err)
 		ctx.JSON(response.StatusCode, response)
@@ -374,7 +374,7 @@ func (uc *UserController) GetUserGames(ctx *gin.Context) {
 	response := &communication.ResponseDTO{
 		StatusCode: http.StatusOK,
 		Message:    "",
-		Data:       games,
+		Data:       communication.UserGamesResponse{Games: games, TotalItems: totalItems},
 	}
 	ctx.JSON(response.StatusCode, response)
 }

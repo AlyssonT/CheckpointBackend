@@ -136,18 +136,21 @@ func (ur *UserRepository) AddGameToUser(userID uint, game_data *communication.Ad
 	return nil
 }
 
-func (ur *UserRepository) GetUserGames(userID uint) ([]models.UserGame, error) {
+func (ur *UserRepository) GetUserGames(userID uint) ([]models.UserGame, int64, error) {
 	var user_games []models.UserGame
 	result := ur.dbConnection.
 		Preload("Game").
 		Where("user_id = ?", userID).
 		Find(&user_games)
 
+	var totalItems int64
+	ur.dbConnection.Model(&models.UserGame{}).Where("user_id = ?", userID).Count(&totalItems)
+
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, 0, result.Error
 	}
 
-	return user_games, nil
+	return user_games, totalItems, nil
 }
 
 func (ur *UserRepository) GetUserGameById(userID uint, gameId uint) (*models.UserGame, error) {
