@@ -14,9 +14,11 @@ type Configs struct {
 var configsData Configs
 
 func BuildConfigs() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error on setting environment")
+	if os.Getenv("ENVIRONMENT") != "prod" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error on setting environment")
+		}
 	}
 
 	configsData = Configs{
