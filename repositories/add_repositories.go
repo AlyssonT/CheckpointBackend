@@ -8,6 +8,7 @@ type Respositories struct {
 	UserRepository  *UserRepository
 	LoginRepository *LoginRepository
 	GameRepository  *GameRepository
+	FileRepository  *FileRepository
 }
 
 func NewRepositories(dbConnection *gorm.DB) *Respositories {
@@ -15,5 +16,6 @@ func NewRepositories(dbConnection *gorm.DB) *Respositories {
 		UserRepository:  NewUserRepository(dbConnection),
 		LoginRepository: NewLoginRepository(dbConnection),
 		GameRepository:  NewGameRepository(dbConnection),
+		FileRepository:  NewFileRepository("./static/avatars"),
 	}
 }

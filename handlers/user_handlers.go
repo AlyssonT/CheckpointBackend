@@ -8,16 +8,18 @@ import (
 )
 
 type UserHandlers struct {
-	repository    *repositories.UserRepository
-	cryptographer interfaces.Cryptographer
-	jwtService    interfaces.JwtService
+	repository      *repositories.UserRepository
+	fileRespository *repositories.FileRepository
+	cryptographer   interfaces.Cryptographer
+	jwtService      interfaces.JwtService
 }
 
 func NewUserHandlers(repos *repositories.Respositories, cryptographer interfaces.Cryptographer, jwtService interfaces.JwtService) *UserHandlers {
 	return &UserHandlers{
-		repository:    repos.UserRepository,
-		cryptographer: cryptographer,
-		jwtService:    jwtService,
+		repository:      repos.UserRepository,
+		fileRespository: repos.FileRepository,
+		cryptographer:   cryptographer,
+		jwtService:      jwtService,
 	}
 }
 
@@ -60,9 +62,14 @@ func (uh *UserHandlers) UpdateUserProfileDetails(user *communication.UserProfile
 		return err
 	}
 
-	//TODO CALL CDN TO CREATE URL
+	if user.AvatarData != nil {
+		avatarURL, err := uh.fileRespository.SaveAvatar(user.AvatarData, user.UserID)
+		if err != nil {
+			return err
+		}
+		userProfileDetails.AvatarURL = avatarURL
+	}
 
-	userProfileDetails.AvatarURL = "new url"
 	userProfileDetails.Bio = user.Bio
 	err = uh.repository.UpdateUserProfileDetails(userProfileDetails)
 
@@ -82,7 +89,7 @@ func (uh *UserHandlers) GetUserProfile(parsedID uint) (*communication.UserProfil
 
 	return &communication.UserProfileResponse{
 		Bio:       userProfile.Bio,
-		AvatarURL: userProfile.Bio,
+		AvatarURL: userProfile.AvatarURL,
 		UserID:    parsedID,
 	}, nil
 }
