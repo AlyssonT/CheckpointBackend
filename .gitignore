@@ -4,3 +4,4 @@ processed_ids.txt
 *.exe
 *.db
 static
+app

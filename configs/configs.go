@@ -10,6 +10,7 @@ import (
 type Configs struct {
 	FrontendURL string
 	Domain      string
+	Environment string
 }
 
 var configsData Configs
@@ -25,6 +26,7 @@ func BuildConfigs() {
 	configsData = Configs{
 		FrontendURL: os.Getenv("FRONTEND_URL"),
 		Domain:      os.Getenv("DOMAIN"),
+		Environment: os.Getenv("ENVIRONMENT"),
 	}
 }
 

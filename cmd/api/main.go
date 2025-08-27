@@ -13,6 +13,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	configs.BuildConfigs()
+
+	configs := configs.GetConfigs()
+	if configs.Environment == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+}
+
 //	@title						Checkpoint API
 //	@version					1.0
 //	@description				Checkpoint API Docs.
@@ -23,8 +32,6 @@ import (
 
 // @schemes	http
 func main() {
-	configs.BuildConfigs()
-
 	dbConnection := db.InitDb()
 
 	repositories := repositories.NewRepositories(dbConnection)

@@ -8,6 +8,7 @@ import (
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
+	"github.com/AlyssonT/CheckpointBackend/configs"
 	"github.com/AlyssonT/CheckpointBackend/handlers"
 	"github.com/AlyssonT/CheckpointBackend/interfaces"
 	"github.com/gin-gonic/gin"
@@ -88,7 +89,11 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", "", true, true)
+	domain := ""
+	if gin.Mode() == gin.ReleaseMode {
+		domain = configs.GetConfigs().Domain
+	}
+	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", domain, true, true)
 
 	response := communication.ResponseDTO{
 		StatusCode: http.StatusCreated,

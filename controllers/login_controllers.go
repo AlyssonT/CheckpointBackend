@@ -6,6 +6,7 @@ import (
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
+	"github.com/AlyssonT/CheckpointBackend/configs"
 	"github.com/AlyssonT/CheckpointBackend/handlers"
 	"github.com/gin-gonic/gin"
 )
@@ -51,7 +52,11 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", "", true, true)
+	domain := ""
+	if gin.Mode() == gin.ReleaseMode {
+		domain = configs.GetConfigs().Domain
+	}
+	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", domain, true, true)
 
 	response := &communication.ResponseDTO{
 		StatusCode: http.StatusOK,
@@ -71,7 +76,11 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 // @Failure		401
 // @Failure		500
 func (lc *LoginController) Logout(ctx *gin.Context) {
-	ctx.SetCookie("auth_token", "", -1, "/", "", true, true)
+	domain := ""
+	if gin.Mode() == gin.ReleaseMode {
+		domain = configs.GetConfigs().Domain
+	}
+	ctx.SetCookie("auth_token", "", -1, "/", domain, true, true)
 
 	response := &communication.ResponseDTO{
 		StatusCode: http.StatusOK,
