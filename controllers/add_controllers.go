@@ -29,7 +29,7 @@ func DefineControllers(handlers *handlers.Handlers, server *gin.Engine) {
 	server.Static("/uploads/avatars", "./static/avatars")
 
 	authorized := server.Group("/")
-	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
+	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService), middlewares.Debug())
 	{
 		authorized.GET("/me", controllers.UserController.Me)
 		authorized.POST("/logout", controllers.LoginController.Logout)

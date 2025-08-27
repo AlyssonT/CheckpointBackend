@@ -8,7 +8,6 @@ import (
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
 	"github.com/AlyssonT/CheckpointBackend/communication/exceptions"
-	"github.com/AlyssonT/CheckpointBackend/configs"
 	"github.com/AlyssonT/CheckpointBackend/handlers"
 	"github.com/AlyssonT/CheckpointBackend/interfaces"
 	"github.com/gin-gonic/gin"
@@ -90,7 +89,7 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 	}
 
 	ctx.SetSameSite(http.SameSiteStrictMode)
-	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", configs.GetConfigs().Domain, true, true)
+	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", "", true, true)
 
 	response := communication.ResponseDTO{
 		StatusCode: http.StatusCreated,
