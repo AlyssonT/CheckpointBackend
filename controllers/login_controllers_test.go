@@ -35,7 +35,6 @@ func TestLogin_Success(t *testing.T) {
 	assert.NotNil(t, authCookie)
 	assert.True(t, authCookie.HttpOnly)
 	assert.True(t, authCookie.Secure)
-	assert.Equal(t, http.SameSiteStrictMode, authCookie.SameSite)
 
 	jwtService := services.NewJwt()
 	_, err := jwtService.VerifyToken(authCookie.Value)

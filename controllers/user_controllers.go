@@ -88,7 +88,6 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetSameSite(http.SameSiteStrictMode)
 	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", "", true, true)
 
 	response := communication.ResponseDTO{

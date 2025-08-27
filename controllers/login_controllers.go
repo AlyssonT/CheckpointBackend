@@ -51,7 +51,6 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetSameSite(http.SameSiteStrictMode)
 	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", "", true, true)
 
 	response := &communication.ResponseDTO{
@@ -72,7 +71,6 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 // @Failure		401
 // @Failure		500
 func (lc *LoginController) Logout(ctx *gin.Context) {
-	ctx.SetSameSite(http.SameSiteStrictMode)
 	ctx.SetCookie("auth_token", "", -1, "/", "", true, true)
 
 	response := &communication.ResponseDTO{
