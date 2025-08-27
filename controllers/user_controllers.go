@@ -93,6 +93,7 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 	if gin.Mode() == gin.ReleaseMode {
 		domain = configs.GetConfigs().Domain
 	}
+	ctx.SetSameSite(http.SameSiteNoneMode)
 	ctx.SetCookie("auth_token", token, int(time.Hour.Seconds())*24, "/", domain, true, true)
 
 	response := communication.ResponseDTO{
