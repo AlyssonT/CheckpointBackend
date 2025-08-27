@@ -17,7 +17,7 @@ func NewGameRepository(db *gorm.DB) *GameRepository {
 	}
 }
 
-func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) (*[]models.Game, int64, error) {
+func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) ([]models.Game, int64, error) {
 	pagination := communication.PaginationRequest{
 		Page:     req.Page,
 		PageSize: req.PageSize,
@@ -28,7 +28,7 @@ func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) (*[]model
 
 	scope := gr.dbConnection.Preload("Genres").Model(&models.Game{})
 	if req.Query != "" {
-		scope = scope.Where("name LIKE ?", "%"+req.Query+"%")
+		scope = scope.Where("LOWER(name) LIKE LOWER(?)", "%"+req.Query+"%")
 	}
 	scope.Count(&totalItems)
 
@@ -39,7 +39,7 @@ func (gr *GameRepository) GetGames(req *communication.GetGamesRequest) (*[]model
 		return nil, 0, result.Error
 	}
 
-	return &games, totalItems, nil
+	return games, totalItems, nil
 }
 
 func (gr *GameRepository) GetGameById(gameId int) (*models.Game, error) {
@@ -74,7 +74,7 @@ func (gr *GameRepository) GetGameReviewsData(
 	err = gr.dbConnection.Model(&models.UserGame{}).
 		Where("game_id = ?", gameId).
 		Select(`
-			COALESCE(AVG(score), 0) AS average_rating,
+			COALESCE(ROUND(AVG(score)), 0) AS average_rating,
 			SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS playing,
 			SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS finished,
 			SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS backlog,

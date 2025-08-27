@@ -21,8 +21,8 @@ func (gh *GameHandlers) GetGames(req *communication.GetGamesRequest) ([]communic
 		return nil, 0, err
 	}
 
-	responseGames := make([]communication.Game, len(*games))
-	for i, game := range *games {
+	responseGames := make([]communication.Game, len(games))
+	for i, game := range games {
 		genresResponse := make([]communication.GenreResponseData, len(game.Genres))
 		for i, genre := range game.Genres {
 			genresResponse[i] = communication.GenreResponseData{

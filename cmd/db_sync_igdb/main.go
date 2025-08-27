@@ -108,6 +108,7 @@ func saveOnDb(games *[]communication.IGDBGamesDto, db *gorm.DB) {
 
 func main() {
 	configs.BuildConfigsDbSync()
+	configs.BuildConfigs()
 	dbConnection := db.InitDb(logger.Silent)
 
 	igdbHelper := services.NewIGDBApiHelper()

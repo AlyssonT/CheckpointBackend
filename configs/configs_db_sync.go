@@ -28,6 +28,12 @@ type ConfigsDbSync struct {
 	SecretKey                  string
 	SteamStoreApiURL           string
 	SteamApiURL                string
+	Environment                string
+	DBHost                     string
+	DBUser                     string
+	DBPassword                 string
+	DBName                     string
+	DBPort                     string
 }
 
 var configsDataDbSync ConfigsDbSync
@@ -46,6 +52,12 @@ func BuildConfigsDbSync() {
 		SecretKey:            os.Getenv("SECRET_KEY"),
 		SteamStoreApiURL:     os.Getenv("STEAM_STORE_API_URL"),
 		SteamApiURL:          os.Getenv("STEAM_API_URL"),
+		Environment:          os.Getenv("ENVIRONMENT"),
+		DBHost:               os.Getenv("DB_HOST"),
+		DBUser:               os.Getenv("DB_USER"),
+		DBPassword:           os.Getenv("DB_PASSWORD"),
+		DBName:               os.Getenv("DB_NAME"),
+		DBPort:               os.Getenv("DB_PORT"),
 	}
 
 	formData := url.Values{}

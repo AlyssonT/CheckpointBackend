@@ -41,7 +41,7 @@ func main() {
 	server := gin.Default()
 
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{configs.GetConfigs().FrontendURL, "http://localhost:5173"}
+	config.AllowOrigins = []string{configs.GetConfigs().FrontendURL}
 	config.AllowMethods = []string{"POST", "GET", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
 	config.ExposeHeaders = []string{"Content-Length"}
