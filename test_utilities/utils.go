@@ -57,3 +57,18 @@ func MakeRequest(server *gin.Engine, method, path string, body any, cookies []*h
 	server.ServeHTTP(w, req)
 	return w
 }
+
+func ConvertDataFromResponse[T any](data any) (T, error) {
+	var result T
+
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		return result, err
+	}
+
+	if err := json.Unmarshal(dataBytes, &result); err != nil {
+		return result, err
+	}
+
+	return result, nil
+}

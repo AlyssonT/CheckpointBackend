@@ -11,11 +11,11 @@ type Respositories struct {
 	FileRepository  *FileRepository
 }
 
-func NewRepositories(dbConnection *gorm.DB) *Respositories {
+func NewRepositories(dbConnection *gorm.DB, avatarPath string) *Respositories {
 	return &Respositories{
 		UserRepository:  NewUserRepository(dbConnection),
 		LoginRepository: NewLoginRepository(dbConnection),
 		GameRepository:  NewGameRepository(dbConnection),
-		FileRepository:  NewFileRepository("./static/avatars"),
+		FileRepository:  NewFileRepository(avatarPath),
 	}
 }

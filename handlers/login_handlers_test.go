@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"os"
 	"testing"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
@@ -20,7 +21,7 @@ func setupLoginHandlerForTest(Db *gorm.DB) (*LoginHandlers, *services.Jwt) {
 	}
 	cryptography := services.NewCryptography(services.DefaultCost)
 	jwt := services.NewJwt()
-	return NewLoginHandlers(repositories.NewRepositories(Db), &cryptography, &jwt), &jwt
+	return NewLoginHandlers(repositories.NewRepositories(Db, os.TempDir()+"/avatars"), &cryptography, &jwt), &jwt
 }
 
 func TestLoginHandler_Success(t *testing.T) {

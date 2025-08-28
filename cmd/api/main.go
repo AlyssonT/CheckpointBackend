@@ -34,7 +34,7 @@ func init() {
 func main() {
 	dbConnection := db.InitDb()
 
-	repositories := repositories.NewRepositories(dbConnection)
+	repositories := repositories.NewRepositories(dbConnection, "./static/avatars")
 
 	handlers := handlers.NewHandlers(repositories)
 

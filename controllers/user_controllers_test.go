@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
@@ -23,7 +24,7 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 
 	testServer := gin.Default()
 	dbtest := db.SetupTestDb(&models.User{}, &models.UserProfile{}, &models.Game{}, &models.UserGame{})
-	handlers := handlers.NewHandlers(repositories.NewRepositories(dbtest))
+	handlers := handlers.NewHandlers(repositories.NewRepositories(dbtest, os.TempDir()+"/avatars"))
 	userControllers := NewUserControllers(handlers)
 	loginControllers := NewLoginControllers(handlers)
 
@@ -32,6 +33,8 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 	authorized := testServer.Group("/")
 	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
 	{
+		authorized.GET("/user/games", userControllers.GetUserGames)
+		authorized.GET("/user/games/:gameId", userControllers.GetUserGameById)
 		authorized.POST("/user/games", userControllers.AddGameToUser)
 		authorized.PUT("/user/games/:gameId", userControllers.UpdateGameToUser)
 		authorized.DELETE("/user/games/:gameId", userControllers.DeleteGameToUser)
@@ -307,4 +310,64 @@ func TestDeleteGameToUser_Fail(t *testing.T) {
 	w = testutilities.MakeRequest(server, "DELETE", fmt.Sprintf("/user/games/%d", 1000001), nil, cookies)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
+}
+
+func TestGetGamesUser_Success(t *testing.T) {
+	server, db := setupApiForTest()
+
+	cookies := testutilities.RegisterFakeUser(server)
+	game_id := testutilities.RegisterFakeGame(db)
+
+	add_game_request := communication.AddGameToUserRequest{
+		Game_id: game_id,
+		Status:  0,
+		Score:   90,
+		Review:  "Great game!",
+	}
+
+	w := testutilities.MakeRequest(server, "POST", "/user/games", add_game_request, cookies)
+
+	var responseJSON communication.ResponseDTO
+	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	w = testutilities.MakeRequest(server, "GET", "/user/games", nil, cookies)
+	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+
+	userGamesData, err := testutilities.ConvertDataFromResponse[communication.UserGamesResponse](responseJSON.Data)
+
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Len(t, userGamesData.Games, 1)
+}
+
+func TestGetGameUserById_Success(t *testing.T) {
+	server, db := setupApiForTest()
+
+	cookies := testutilities.RegisterFakeUser(server)
+	game_id := testutilities.RegisterFakeGame(db)
+
+	add_game_request := communication.AddGameToUserRequest{
+		Game_id: game_id,
+		Status:  0,
+		Score:   90,
+		Review:  "Great game!",
+	}
+
+	w := testutilities.MakeRequest(server, "POST", "/user/games", add_game_request, cookies)
+
+	var responseJSON communication.ResponseDTO
+	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	w = testutilities.MakeRequest(server, "GET", fmt.Sprintf("/user/games/%d", game_id), nil, cookies)
+	json.Unmarshal(w.Body.Bytes(), &responseJSON)
+
+	userGamesData, err := testutilities.ConvertDataFromResponse[communication.UserGame](responseJSON.Data)
+
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, add_game_request.Review, userGamesData.Review)
 }

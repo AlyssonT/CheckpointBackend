@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"os"
 	"testing"
 
 	communication "github.com/AlyssonT/CheckpointBackend/communication/dtos"
@@ -16,7 +17,7 @@ func setupGameHandlersForTest(Db *gorm.DB) (*GameHandlers, *gorm.DB) {
 	if Db == nil {
 		Db = db.SetupTestDb(&models.Game{}, &models.Genre{})
 	}
-	return NewGameHandlers(repositories.NewRepositories(Db)), Db
+	return NewGameHandlers(repositories.NewRepositories(Db, os.TempDir()+"/avatars")), Db
 }
 
 func TestGetGamesHandler_Success(t *testing.T) {
