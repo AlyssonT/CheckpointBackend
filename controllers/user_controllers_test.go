@@ -33,7 +33,7 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 	authorized := testServer.Group("/")
 	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
 	{
-		authorized.GET("/user/games", userControllers.GetUserGames)
+		authorized.GET("/user/:username/games", userControllers.GetUserGames)
 		authorized.GET("/user/games/:gameId", userControllers.GetUserGameById)
 		authorized.POST("/user/games", userControllers.AddGameToUser)
 		authorized.PUT("/user/games/:gameId", userControllers.UpdateGameToUser)
@@ -92,7 +92,7 @@ func TestValidateUser(t *testing.T) {
 func TestAddGameToUser_Success(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -112,7 +112,7 @@ func TestAddGameToUser_Success(t *testing.T) {
 
 func TestAddGameToUser_FailValidation(t *testing.T) {
 	server, _ := setupApiForTest()
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 
 	add_game_request := communication.AddGameToUserRequest{
 		Status: 5,
@@ -141,7 +141,7 @@ func TestAddGameToUser_FailValidation(t *testing.T) {
 
 func TestAddGameToUser_FailGameDontExist(t *testing.T) {
 	server, _ := setupApiForTest()
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 
 	add_game_request := communication.AddGameToUserRequest{
 		Game_id: 1,
@@ -161,7 +161,7 @@ func TestAddGameToUser_FailGameDontExist(t *testing.T) {
 func TestUpdateGameToUser_Success(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -192,7 +192,7 @@ func TestUpdateGameToUser_Success(t *testing.T) {
 func TestUpdateGameToUser_FailValidation(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -234,7 +234,7 @@ func TestUpdateGameToUser_FailValidation(t *testing.T) {
 func TestUpdateGameToUser_FailGameDoesntExist(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -265,7 +265,7 @@ func TestUpdateGameToUser_FailGameDoesntExist(t *testing.T) {
 func TestDeleteGameToUser_Success(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -290,7 +290,7 @@ func TestDeleteGameToUser_Success(t *testing.T) {
 func TestDeleteGameToUser_Fail(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -315,7 +315,7 @@ func TestDeleteGameToUser_Fail(t *testing.T) {
 func TestGetGamesUser_Success(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, user := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -332,7 +332,7 @@ func TestGetGamesUser_Success(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	w = testutilities.MakeRequest(server, "GET", "/user/games", nil, cookies)
+	w = testutilities.MakeRequest(server, "GET", fmt.Sprintf("/user/%s/games", user.Name), nil, cookies)
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
 
 	userGamesData, err := testutilities.ConvertDataFromResponse[communication.UserGamesResponse](responseJSON.Data)
@@ -345,7 +345,7 @@ func TestGetGamesUser_Success(t *testing.T) {
 func TestGetGameUserById_Success(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies := testutilities.RegisterFakeUser(server)
+	cookies, _ := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{

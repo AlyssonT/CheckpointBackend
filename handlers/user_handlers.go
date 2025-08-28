@@ -156,3 +156,7 @@ func (uh *UserHandlers) GetUserGameById(userID uint, gameId uint) (*communicatio
 
 	return &game, nil
 }
+
+func (uh *UserHandlers) GetUserIdByUsername(username string) (uint, error) {
+	return uh.repository.GetUserIdByUsername(username)
+}

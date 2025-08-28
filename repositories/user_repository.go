@@ -76,6 +76,17 @@ func (ur *UserRepository) GetUser(userID uint) (*models.User, error) {
 	return &user, nil
 }
 
+func (ur *UserRepository) GetUserIdByUsername(username string) (uint, error) {
+	var user models.User
+	result := ur.dbConnection.Where("name = ?", username).First(&user)
+
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return user.ID, nil
+}
+
 func (ur *UserRepository) GetUserProfileDetails(userID uint) (*models.UserProfile, error) {
 	var userPrfileDetails models.UserProfile
 	result := ur.dbConnection.Where(&models.UserProfile{UserID: userID}).First(&userPrfileDetails)

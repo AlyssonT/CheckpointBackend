@@ -18,7 +18,7 @@ func BuildFakeUser() communication.RegisterUserRequest {
 	}
 }
 
-func RegisterFakeUser(server *gin.Engine) []*http.Cookie {
+func RegisterFakeUser(server *gin.Engine) ([]*http.Cookie, communication.RegisterUserRequest) {
 	user := BuildFakeUser()
 
 	w := MakeRequest(server, "POST", "/user", user, nil)
@@ -36,5 +36,5 @@ func RegisterFakeUser(server *gin.Engine) []*http.Cookie {
 
 	cookies := w.Result().Cookies()
 
-	return cookies
+	return cookies, user
 }

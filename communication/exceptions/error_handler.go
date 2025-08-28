@@ -18,6 +18,7 @@ var (
 	ErrorGameAlreadyAddedUser = errors.New("game already added for this user")
 	ErrorInvalidGameId        = errors.New("invalid game id")
 	ErrorReviewNotFound       = errors.New("review not found")
+	ErrorUserNotFound         = errors.New("user not found")
 )
 
 var errorStatusMap = map[error]int{
@@ -29,6 +30,7 @@ var errorStatusMap = map[error]int{
 	ErrorGameAlreadyAddedUser: http.StatusConflict,
 	ErrorInvalidGameId:        http.StatusBadRequest,
 	ErrorReviewNotFound:       http.StatusNotFound,
+	ErrorUserNotFound:         http.StatusNotFound,
 }
 
 func ErrorHandler(err error) communication.ResponseDTO {
