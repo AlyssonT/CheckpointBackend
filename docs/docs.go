@@ -17,11 +17,6 @@ const docTemplate = `{
     "paths": {
         "/games": {
             "get": {
-                "security": [
-                    {
-                        "cookieAuth": []
-                    }
-                ],
                 "description": "Get a list of games",
                 "produces": [
                     "application/json"
@@ -66,11 +61,6 @@ const docTemplate = `{
         },
         "/games/{gameId}": {
             "get": {
-                "security": [
-                    {
-                        "cookieAuth": []
-                    }
-                ],
                 "description": "Get game by id",
                 "produces": [
                     "application/json"
@@ -104,11 +94,6 @@ const docTemplate = `{
         },
         "/games/{gameId}/reviews": {
             "get": {
-                "security": [
-                    {
-                        "cookieAuth": []
-                    }
-                ],
                 "description": "Get game reviews",
                 "produces": [
                     "application/json"
@@ -227,6 +212,30 @@ const docTemplate = `{
                 ],
                 "summary": "User data",
                 "operationId": "cookie-token-user-data",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/reviews/latest": {
+            "get": {
+                "description": "Get Latest Reviews",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Latest Reviews",
+                "operationId": "latestReviews",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -445,11 +454,6 @@ const docTemplate = `{
         },
         "/user/{username}/games": {
             "get": {
-                "security": [
-                    {
-                        "cookieAuth": []
-                    }
-                ],
                 "description": "Get user games",
                 "produces": [
                     "application/json"

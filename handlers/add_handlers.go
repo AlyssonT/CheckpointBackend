@@ -6,9 +6,10 @@ import (
 )
 
 type Handlers struct {
-	UserHandlers  *UserHandlers
-	LoginHandlers *LoginHandlers
-	GameHandlers  *GameHandlers
+	UserHandlers   *UserHandlers
+	LoginHandlers  *LoginHandlers
+	GameHandlers   *GameHandlers
+	ReviewHandlers *ReviewHandlers
 }
 
 func NewHandlers(repositories *repositories.Respositories) *Handlers {
@@ -16,8 +17,9 @@ func NewHandlers(repositories *repositories.Respositories) *Handlers {
 	jwtService := services.NewJwt()
 
 	return &Handlers{
-		UserHandlers:  NewUserHandlers(repositories, &cryptography, &jwtService),
-		LoginHandlers: NewLoginHandlers(repositories, &cryptography, &jwtService),
-		GameHandlers:  NewGameHandlers(repositories),
+		UserHandlers:   NewUserHandlers(repositories, &cryptography, &jwtService),
+		LoginHandlers:  NewLoginHandlers(repositories, &cryptography, &jwtService),
+		GameHandlers:   NewGameHandlers(repositories),
+		ReviewHandlers: NewReviewHandlers(repositories),
 	}
 }

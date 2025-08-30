@@ -29,7 +29,6 @@ func NewGameControllers(handlers *handlers.Handlers) *GameController {
 // @Param			query		query	string	false	"Query for search"
 // @Router			/games [get]
 // @Tags			Games
-// @Security		cookieAuth
 // @Success		200
 // @Failure		401
 // @Failure		500
@@ -70,7 +69,6 @@ func (gc *GameController) GetGames(ctx *gin.Context) {
 // @Router			/games/{gameId} [get]
 // @Param			gameId	path	string	true	"Game id"
 // @Tags			Games
-// @Security		cookieAuth
 // @Success		200
 // @Failure		401
 // @Failure		500
@@ -108,7 +106,6 @@ func (gc *GameController) GetGameById(ctx *gin.Context) {
 // @Param			pageSize	query	int		false	"Page size"
 // @Param			gameId		path	string	true	"Game id"
 // @Tags			Games
-// @Security		cookieAuth
 // @Success		200
 // @Failure		401
 // @Failure		500

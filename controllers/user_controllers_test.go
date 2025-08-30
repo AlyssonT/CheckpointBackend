@@ -27,9 +27,12 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 	handlers := handlers.NewHandlers(repositories.NewRepositories(dbtest, os.TempDir()+"/avatars"))
 	userControllers := NewUserControllers(handlers)
 	loginControllers := NewLoginControllers(handlers)
+	reviewsControllers := NewReviewControllers(handlers)
 
 	testServer.POST("/user", userControllers.RegisterUser)
 	testServer.POST("/login", loginControllers.Login)
+	testServer.GET("/reviews/latest", reviewsControllers.GetLatestReviews)
+
 	authorized := testServer.Group("/")
 	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
 	{

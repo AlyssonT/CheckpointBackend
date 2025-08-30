@@ -93,8 +93,6 @@ paths:
           description: Unauthorized
         "500":
           description: Internal Server Error
-      security:
-      - cookieAuth: []
       summary: Get games
       tags:
       - Games
@@ -117,8 +115,6 @@ paths:
           description: Unauthorized
         "500":
           description: Internal Server Error
-      security:
-      - cookieAuth: []
       summary: Get game by id
       tags:
       - Games
@@ -149,8 +145,6 @@ paths:
           description: Unauthorized
         "500":
           description: Internal Server Error
-      security:
-      - cookieAuth: []
       summary: Get game reviews
       tags:
       - Games
@@ -211,6 +205,22 @@ paths:
       summary: User data
       tags:
       - User
+  /reviews/latest:
+    get:
+      description: Get Latest Reviews
+      operationId: latestReviews
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      summary: Latest Reviews
+      tags:
+      - Reviews
   /user/{username}/games:
     get:
       description: Get user games
@@ -229,8 +239,6 @@ paths:
           description: Unauthorized
         "500":
           description: Internal Server Error
-      security:
-      - cookieAuth: []
       summary: Get user games
       tags:
       - User

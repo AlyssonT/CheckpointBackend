@@ -9,16 +9,18 @@ import (
 )
 
 type Controllers struct {
-	UserController  *UserController
-	LoginController *LoginController
-	GameController  *GameController
+	UserController   *UserController
+	LoginController  *LoginController
+	GameController   *GameController
+	ReviewController *ReviewController
 }
 
 func NewControllers(handlers *handlers.Handlers) *Controllers {
 	return &Controllers{
-		UserController:  NewUserControllers(handlers),
-		LoginController: NewLoginControllers(handlers),
-		GameController:  NewGameControllers(handlers),
+		UserController:   NewUserControllers(handlers),
+		LoginController:  NewLoginControllers(handlers),
+		GameController:   NewGameControllers(handlers),
+		ReviewController: NewReviewControllers(handlers),
 	}
 }
 
@@ -33,17 +35,18 @@ func DefineControllers(handlers *handlers.Handlers, server *gin.Engine) {
 	{
 		authorized.GET("/me", controllers.UserController.Me)
 		authorized.POST("/logout", controllers.LoginController.Logout)
-		authorized.GET("/games", controllers.GameController.GetGames)
-		authorized.GET("/games/:gameId", controllers.GameController.GetGameById)
-		authorized.GET("/games/:gameId/reviews", controllers.GameController.GetGameReviews)
-		authorized.GET("/user/:username/profile", controllers.UserController.GetUserProfile)
 		authorized.PUT("/user/profile", controllers.UserController.UpdateUserProfileDetails)
 		authorized.POST("/user/games", controllers.UserController.AddGameToUser)
-		authorized.GET("/user/:username/games", controllers.UserController.GetUserGames)
-		authorized.GET("/user/games/:gameId", controllers.UserController.GetUserGameById)
 		authorized.PUT("/user/games/:gameId", controllers.UserController.UpdateGameToUser)
 		authorized.DELETE("/user/games/:gameId", controllers.UserController.DeleteGameToUser)
 	}
+	server.GET("/user/games/:gameId", controllers.UserController.GetUserGameById)
+	server.GET("/games", controllers.GameController.GetGames)
+	server.GET("/games/:gameId", controllers.GameController.GetGameById)
+	server.GET("/games/:gameId/reviews", controllers.GameController.GetGameReviews)
+	server.GET("/user/:username/profile", controllers.UserController.GetUserProfile)
+	server.GET("/user/:username/games", controllers.UserController.GetUserGames)
+	server.GET("/reviews/latest", controllers.ReviewController.GetLatestReviews)
 	server.POST("/users", controllers.UserController.RegisterUser)
 	server.POST("/login", controllers.LoginController.Login)
 }

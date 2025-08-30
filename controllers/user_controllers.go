@@ -354,7 +354,6 @@ func (uc *UserController) DeleteGameToUser(ctx *gin.Context) {
 // @Description	Get user games
 // @Tags			User
 // @Produce		json
-// @Security		cookieAuth
 // @Router			/user/{username}/games [get]
 // @Param			username	path	string	true	"Username"
 // @Success		200
@@ -400,7 +399,7 @@ func (uc *UserController) GetUserGameById(ctx *gin.Context) {
 	parsedID, ok := userID.(uint)
 
 	if !exists || !ok {
-		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		response := exceptions.ErrorHandler(exceptions.ErrorUserNotFound)
 		ctx.JSON(response.StatusCode, response)
 		return
 	}

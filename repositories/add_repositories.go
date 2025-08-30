@@ -5,17 +5,19 @@ import (
 )
 
 type Respositories struct {
-	UserRepository  *UserRepository
-	LoginRepository *LoginRepository
-	GameRepository  *GameRepository
-	FileRepository  *FileRepository
+	UserRepository   *UserRepository
+	LoginRepository  *LoginRepository
+	GameRepository   *GameRepository
+	ReviewRepository *ReviewRepository
+	FileRepository   *FileRepository
 }
 
 func NewRepositories(dbConnection *gorm.DB, avatarPath string) *Respositories {
 	return &Respositories{
-		UserRepository:  NewUserRepository(dbConnection),
-		LoginRepository: NewLoginRepository(dbConnection),
-		GameRepository:  NewGameRepository(dbConnection),
-		FileRepository:  NewFileRepository(avatarPath),
+		UserRepository:   NewUserRepository(dbConnection),
+		LoginRepository:  NewLoginRepository(dbConnection),
+		GameRepository:   NewGameRepository(dbConnection),
+		ReviewRepository: NewReviewRepository(dbConnection),
+		FileRepository:   NewFileRepository(avatarPath),
 	}
 }
