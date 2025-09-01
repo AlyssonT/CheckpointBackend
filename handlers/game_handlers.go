@@ -98,3 +98,13 @@ func (gh *GameHandlers) GetGameReviews(gameId int, request *communication.GameRe
 
 	return &gameReviewsResponse, nil
 }
+
+func (gh *GameHandlers) GetTopGames() ([]communication.TopGames, error) {
+	topGames, err := gh.repository.GetTopGames()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return topGames, nil
+}

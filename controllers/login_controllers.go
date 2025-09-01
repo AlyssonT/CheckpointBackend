@@ -74,7 +74,6 @@ func (lc *LoginController) Login(ctx *gin.Context) {
 // @Router			/logout [post]
 // @Tags			Authentication
 // @Success		200
-// @Failure		401
 // @Failure		500
 func (lc *LoginController) Logout(ctx *gin.Context) {
 	domain := ""

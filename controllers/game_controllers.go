@@ -30,7 +30,6 @@ func NewGameControllers(handlers *handlers.Handlers) *GameController {
 // @Router			/games [get]
 // @Tags			Games
 // @Success		200
-// @Failure		401
 // @Failure		500
 func (gc *GameController) GetGames(ctx *gin.Context) {
 	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "10"))
@@ -70,7 +69,6 @@ func (gc *GameController) GetGames(ctx *gin.Context) {
 // @Param			gameId	path	string	true	"Game id"
 // @Tags			Games
 // @Success		200
-// @Failure		401
 // @Failure		500
 func (gc *GameController) GetGameById(ctx *gin.Context) {
 	pathId := ctx.Param("gameId")
@@ -107,7 +105,6 @@ func (gc *GameController) GetGameById(ctx *gin.Context) {
 // @Param			gameId		path	string	true	"Game id"
 // @Tags			Games
 // @Success		200
-// @Failure		401
 // @Failure		500
 func (gc *GameController) GetGameReviews(ctx *gin.Context) {
 	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "10"))
@@ -140,6 +137,31 @@ func (gc *GameController) GetGameReviews(ctx *gin.Context) {
 		StatusCode: http.StatusOK,
 		Message:    "",
 		Data:       gameReviews,
+	}
+	ctx.JSON(response.StatusCode, response)
+}
+
+// @Summary		Get top games
+// @Description	Get games with more reviews
+// @ID				get-top-games
+// @Produce		json
+// @Router			/games/rankings/top [get]
+// @Tags			Games
+// @Success		200
+// @Failure		500
+func (gc *GameController) GetTopGames(ctx *gin.Context) {
+	topGames, err := gc.handlers.GetTopGames()
+
+	if err != nil {
+		response := exceptions.ErrorHandler(err)
+		ctx.JSON(response.StatusCode, response)
+		return
+	}
+
+	response := &communication.ResponseDTO{
+		StatusCode: http.StatusOK,
+		Message:    "",
+		Data:       topGames,
 	}
 	ctx.JSON(response.StatusCode, response)
 }

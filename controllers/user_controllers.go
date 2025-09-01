@@ -24,16 +24,16 @@ func NewUserControllers(handlers *handlers.Handlers) *UserController {
 	}
 }
 
-// @Summary		User data
-// @Description	Get user data from cookie token
-// @ID				cookie-token-user-data
-// @Produce		json
-// @Router			/me [get]
-// @Tags			User
-// @Security		cookieAuth
-// @Success		200
-// @Failure		401
-// @Failure		500
+//	@Summary		User data
+//	@Description	Get user data from cookie token
+//	@ID				cookie-token-user-data
+//	@Produce		json
+//	@Router			/me [get]
+//	@Tags			User
+//	@Security		cookieAuth
+//	@Success		200
+//	@Failure		401
+//	@Failure		500
 func (uc *UserController) Me(ctx *gin.Context) {
 	userData, exists := ctx.Get("userData")
 	if !exists {
@@ -57,17 +57,17 @@ func (uc *UserController) Me(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Register user
-// @Description	Register user in the database
-// @ID				register-user
-// @Produce		json
-// @Param			request	body	communication.RegisterUserRequest	true	"User data"
-// @Router			/users [post]
-// @Tags			Authentication
-// @Success		201
-// @Failure		400
-// @Failure		409
-// @Failure		500
+//	@Summary		Register user
+//	@Description	Register user in the database
+//	@ID				register-user
+//	@Produce		json
+//	@Param			request	body	communication.RegisterUserRequest	true	"User data"
+//	@Router			/users [post]
+//	@Tags			Authentication
+//	@Success		201
+//	@Failure		400
+//	@Failure		409
+//	@Failure		500
 func (uc *UserController) RegisterUser(ctx *gin.Context) {
 	var request communication.RegisterUserRequest
 	err := ctx.ShouldBindJSON(&request)
@@ -104,18 +104,18 @@ func (uc *UserController) RegisterUser(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Update user details
-// @Description	Update user profile details like bio, avatar etc.
-// @Tags			User
-// @Accept			multipart/form-data
-// @Produce		json
-// @Security		cookieAuth
-// @Router			/user/profile [put]
-// @Param			bio		formData	string	false	"User Bio"
-// @Param			avatar	formData	file	false	"User Avatar"
-// @Success		200
-// @Failure		400
-// @Failure		500
+//	@Summary		Update user details
+//	@Description	Update user profile details like bio, avatar etc.
+//	@Tags			User
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Security		cookieAuth
+//	@Router			/user/profile [put]
+//	@Param			bio		formData	string	false	"User Bio"
+//	@Param			avatar	formData	file	false	"User Avatar"
+//	@Success		200
+//	@Failure		400
+//	@Failure		500
 func (uc *UserController) UpdateUserProfileDetails(ctx *gin.Context) {
 	userID, exists := ctx.Get("userID")
 	parsedID, ok := userID.(uint)
@@ -153,21 +153,19 @@ func (uc *UserController) UpdateUserProfileDetails(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Get user profile
-// @Description	Get user profile
-// @Tags			User
-// @Produce		json
-// @Security		cookieAuth
-// @Router			/user/{username}/profile [get]
-// @Param			username	path	string	true	"Username"
-// @Success		200
-// @Failure		401
-// @Failure		500
+//	@Summary		Get user profile
+//	@Description	Get user profile
+//	@Tags			User
+//	@Produce		json
+//	@Router			/user/{username}/profile [get]
+//	@Param			username	path	string	true	"Username"
+//	@Success		200
+//	@Failure		500
 func (uc *UserController) GetUserProfile(ctx *gin.Context) {
 	userID, err := uc.handlers.GetUserIdByUsername(ctx.Param("username"))
 
 	if err != nil {
-		response := exceptions.ErrorHandler(exceptions.ErrorInvalidCredentials)
+		response := exceptions.ErrorHandler(exceptions.ErrorUserNotFound)
 		ctx.JSON(response.StatusCode, response)
 		return
 	}
@@ -188,16 +186,16 @@ func (uc *UserController) GetUserProfile(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Add game to user
-// @Description	Add a game to the user's collection
-// @Tags			User
-// @Produce		json
-// @Security		cookieAuth
-// @Router			/user/games [post]
-// @Param			request	body	communication.AddGameToUserRequest	true	"Game data"
-// @Success		200
-// @Failure		401
-// @Failure		500
+//	@Summary		Add game to user
+//	@Description	Add a game to the user's collection
+//	@Tags			User
+//	@Produce		json
+//	@Security		cookieAuth
+//	@Router			/user/games [post]
+//	@Param			request	body	communication.AddGameToUserRequest	true	"Game data"
+//	@Success		200
+//	@Failure		401
+//	@Failure		500
 func (uc *UserController) AddGameToUser(ctx *gin.Context) {
 	userID, exists := ctx.Get("userID")
 	parsedID, ok := userID.(uint)
@@ -236,17 +234,17 @@ func (uc *UserController) AddGameToUser(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Update user game
-// @Description	Update user game
-// @Tags			User
-// @Produce		json
-// @Security		cookieAuth
-// @Router			/user/games/{gameId} [put]
-// @Param			gameId	path	string									true	"Game ID to update"
-// @Param			request	body	communication.UpdateGameToUserRequest	true	"Game data"
-// @Success		200
-// @Failure		401
-// @Failure		500
+//	@Summary		Update user game
+//	@Description	Update user game
+//	@Tags			User
+//	@Produce		json
+//	@Security		cookieAuth
+//	@Router			/user/games/{gameId} [put]
+//	@Param			gameId	path	string									true	"Game ID to update"
+//	@Param			request	body	communication.UpdateGameToUserRequest	true	"Game data"
+//	@Success		200
+//	@Failure		401
+//	@Failure		500
 func (uc *UserController) UpdateGameToUser(ctx *gin.Context) {
 	userID, exists := ctx.Get("userID")
 	parsedID, ok := userID.(uint)
@@ -298,16 +296,16 @@ func (uc *UserController) UpdateGameToUser(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Delete user game
-// @Description	Delete user game
-// @Tags			User
-// @Produce		json
-// @Security		cookieAuth
-// @Router			/user/games/{gameId} [delete]
-// @Param			gameId	path	string	true	"Game ID to delete"
-// @Success		200
-// @Failure		401
-// @Failure		500
+//	@Summary		Delete user game
+//	@Description	Delete user game
+//	@Tags			User
+//	@Produce		json
+//	@Security		cookieAuth
+//	@Router			/user/games/{gameId} [delete]
+//	@Param			gameId	path	string	true	"Game ID to delete"
+//	@Success		200
+//	@Failure		401
+//	@Failure		500
 func (uc *UserController) DeleteGameToUser(ctx *gin.Context) {
 	userID, exists := ctx.Get("userID")
 	parsedID, ok := userID.(uint)
@@ -350,15 +348,14 @@ func (uc *UserController) DeleteGameToUser(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Get user games
-// @Description	Get user games
-// @Tags			User
-// @Produce		json
-// @Router			/user/{username}/games [get]
-// @Param			username	path	string	true	"Username"
-// @Success		200
-// @Failure		401
-// @Failure		500
+//	@Summary		Get user games
+//	@Description	Get user games
+//	@Tags			User
+//	@Produce		json
+//	@Router			/user/{username}/games [get]
+//	@Param			username	path	string	true	"Username"
+//	@Success		200
+//	@Failure		500
 func (uc *UserController) GetUserGames(ctx *gin.Context) {
 	userID, err := uc.handlers.GetUserIdByUsername(ctx.Param("username"))
 
@@ -383,22 +380,21 @@ func (uc *UserController) GetUserGames(ctx *gin.Context) {
 	ctx.JSON(response.StatusCode, response)
 }
 
-// @Summary		Get user game
-// @Description	Get user game by id
-// @Tags			User
-// @Produce		json
-// @Security		cookieAuth
-// @Router			/user/games/{gameId} [get]
-// @Param			gameId	path	string	true	"Game ID"
-// @Success		200
-// @Failure		401
-// @Failure		404
-// @Failure		500
+//	@Summary		Get user game
+//	@Description	Get user game by id
+//	@Tags			User
+//	@Produce		json
+//	@Security		cookieAuth
+//	@Router			/user/{username}/games/{gameId} [get]
+//	@Param			gameId		path	string	true	"Game ID"
+//	@Param			username	path	string	true	"Username"
+//	@Success		200
+//	@Failure		404
+//	@Failure		500
 func (uc *UserController) GetUserGameById(ctx *gin.Context) {
-	userID, exists := ctx.Get("userID")
-	parsedID, ok := userID.(uint)
+	userID, err := uc.handlers.GetUserIdByUsername(ctx.Param("username"))
 
-	if !exists || !ok {
+	if err != nil {
 		response := exceptions.ErrorHandler(exceptions.ErrorUserNotFound)
 		ctx.JSON(response.StatusCode, response)
 		return
@@ -417,7 +413,7 @@ func (uc *UserController) GetUserGameById(ctx *gin.Context) {
 		return
 	}
 
-	game, err := uc.handlers.GetUserGameById(parsedID, uint(parsedGameId))
+	game, err := uc.handlers.GetUserGameById(userID, uint(parsedGameId))
 	if err != nil {
 		response := exceptions.ErrorHandler(err)
 		ctx.JSON(response.StatusCode, response)

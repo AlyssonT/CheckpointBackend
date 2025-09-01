@@ -98,3 +98,21 @@ func (gr *GameRepository) GetGameReviewsData(
 
 	return gameReviews, &reviewsAdditionalData, totalItems, nil
 }
+
+func (gr *GameRepository) GetTopGames() ([]communication.TopGames, error) {
+	var topGames []communication.TopGames
+	err := gr.dbConnection.
+		Model(&models.Game{}).
+		Select("games.game_id, games.name, games.imagem, COUNT(user_games.user_id) as review_count").
+		Joins("left join user_games on user_games.game_id = games.game_id").
+		Group("games.game_id").
+		Order("review_count DESC").
+		Limit(5).
+		Scan(&topGames).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return topGames, nil
+}

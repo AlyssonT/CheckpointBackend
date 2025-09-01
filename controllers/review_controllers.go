@@ -28,7 +28,6 @@ func NewReviewControllers(handlers *handlers.Handlers) *ReviewController {
 // @Router			/reviews/latest [get]
 // @Tags			Reviews
 // @Success		200
-// @Failure		401
 // @Failure		500
 func (rc *ReviewController) GetLatestReviews(ctx *gin.Context) {
 	reviews, err := rc.reviewHandlers.GetLatestReviews()

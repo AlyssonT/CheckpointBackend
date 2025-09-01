@@ -32,12 +32,12 @@ func setupApiForTest() (*gin.Engine, *gorm.DB) {
 	testServer.POST("/user", userControllers.RegisterUser)
 	testServer.POST("/login", loginControllers.Login)
 	testServer.GET("/reviews/latest", reviewsControllers.GetLatestReviews)
+	testServer.GET("/user/:username/games/:gameId", userControllers.GetUserGameById)
+	testServer.GET("/user/:username/games", userControllers.GetUserGames)
 
 	authorized := testServer.Group("/")
 	authorized.Use(middlewares.Authenticate(handlers.LoginHandlers.JwtService))
 	{
-		authorized.GET("/user/:username/games", userControllers.GetUserGames)
-		authorized.GET("/user/games/:gameId", userControllers.GetUserGameById)
 		authorized.POST("/user/games", userControllers.AddGameToUser)
 		authorized.PUT("/user/games/:gameId", userControllers.UpdateGameToUser)
 		authorized.DELETE("/user/games/:gameId", userControllers.DeleteGameToUser)
@@ -348,7 +348,7 @@ func TestGetGamesUser_Success(t *testing.T) {
 func TestGetGameUserById_Success(t *testing.T) {
 	server, db := setupApiForTest()
 
-	cookies, _ := testutilities.RegisterFakeUser(server)
+	cookies, user := testutilities.RegisterFakeUser(server)
 	game_id := testutilities.RegisterFakeGame(db)
 
 	add_game_request := communication.AddGameToUserRequest{
@@ -365,7 +365,7 @@ func TestGetGameUserById_Success(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 
-	w = testutilities.MakeRequest(server, "GET", fmt.Sprintf("/user/games/%d", game_id), nil, cookies)
+	w = testutilities.MakeRequest(server, "GET", fmt.Sprintf("/user/%s/games/%d", user.Name, game_id), nil, nil)
 	json.Unmarshal(w.Body.Bytes(), &responseJSON)
 
 	userGamesData, err := testutilities.ConvertDataFromResponse[communication.UserGame](responseJSON.Data)

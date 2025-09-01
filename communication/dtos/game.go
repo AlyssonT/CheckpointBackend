@@ -58,3 +58,10 @@ const (
 	StatusBacklog
 	StatusDropped
 )
+
+type TopGames struct {
+	GameId      uint   `json:"game_id" gorm:"column:game_id"`
+	Name        string `json:"name" gorm:"column:name"`
+	ImageURL    string `json:"imageURL" gorm:"column:imagem"`
+	ReviewCount uint   `json:"reviewCount" gorm:"column:review_count"`
+}
