@@ -34,6 +34,7 @@ func (rh *ReviewHandlers) GetLatestReviews() ([]communication.Review, error) {
 			Game: communication.ReviewGame{
 				Name:     r.Game.Name,
 				ImageURL: r.Game.Imagem,
+				GameId:   r.Game.Game_id,
 			},
 			Status:     r.Status,
 			Score:      r.Score,

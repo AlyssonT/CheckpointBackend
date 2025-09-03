@@ -8,6 +8,7 @@ type ReviewUser struct {
 type ReviewGame struct {
 	Name     string `json:"name"`
 	ImageURL string `json:"imageURL"`
+	GameId   uint   `json:"game_id"`
 }
 
 type Review struct {
